@@ -1,0 +1,44 @@
+# ====================================================================
+# TEMPLATE GENERAL DE .GITIGNORE - CAMPEONÍSIMO BÍBLICO
+# ====================================================================
+
+# --- Archivos del entorno virtual y dependencias de Python ---
+venv/
+.venv/
+env/
+ENV/
+bin/
+lib/
+include/
+share/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# --- Caché de ejecución de Python ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# --- Archivos de registro e historial local del juego ---
+# Esto evita que subas tus contraseñas de prueba, logs o datos privados
+competencia.log
+backups/
+
+# --- Basura de editores de código (VS Code e IntelliJ/PyCharm) ---
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# --- Residuos del compilador PyInstaller (si intentas hacer un .exe) ---
+build/
+dist/
+*.spec
+
+# --- Archivos temporales del sistema operativo ---
+.DS_Store
+Thumbs.db

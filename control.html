@@ -1,0 +1,4594 @@
+<!doctype html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Control — Campeonísimo Bíblico</title>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Nunito:wght@400;500;600;700;800&family=Cinzel:wght@400;600;700;900&family=Lora:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            /* ══════════════════════════════════════════════════════
+   TOKENS
+   ══════════════════════════════════════════════════════ */
+            :root {
+                --bg: #0a0a0a;
+                --surface: #111111;
+                --card: #161616;
+                --border: #242424;
+                --border2: #2e2e2e;
+                --text: #f0f0f0;
+                --muted: #666;
+                --muted2: #444;
+
+                --jovenes: #7c3aed;
+                --jovenes2: #6d28d9;
+                --damas: #db2777;
+                --damas2: #be185d;
+                --caball: #0284c7;
+                --caball2: #0369a1;
+                --ninos: #059669;
+                --ninos2: #047857;
+
+                --accent: #7c3aed;
+                --green: #10b981;
+                --red: #ef4444;
+                --yellow: #f59e0b;
+                --white: #ffffff;
+                --bg2: #1a1a1a;
+
+                --radius: 8px;
+                --radius-sm: 5px;
+                --ease: cubic-bezier(0.25, 1, 0.5, 1);
+            }
+
+            /* ══════════════════════════════════════════════════════
+   TEMA SERENO — calm / light
+   ══════════════════════════════════════════════════════ */
+            [data-theme="calm"] {
+                --bg: #f5f0eb;
+                --surface: #ffffff;
+                --card: #ffffff;
+                --border: #e5ddd5;
+                --border2: #d5cdc5;
+                --text: #2d2a24;
+                --muted: #8a827a;
+                --muted2: #bab2aa;
+
+                --jovenes: #a78bfa;
+                --jovenes2: #c4b5fd;
+                --damas: #f472b6;
+                --damas2: #f9a8d4;
+                --caball: #38bdf8;
+                --caball2: #7dd3fc;
+                --ninos: #34d399;
+                --ninos2: #6ee7b7;
+
+                --accent: #a78bfa;
+                --green: #34d399;
+                --red: #f87171;
+                --yellow: #fbbf24;
+                --white: #ffffff;
+
+                --radius: 12px;
+                --radius-sm: 8px;
+            }
+
+            [data-theme="calm"] body {
+                font-family: "Nunito", system-ui, sans-serif;
+            }
+
+            [data-theme="calm"] .header {
+                background: rgba(255, 255, 255, 0.92);
+                border-bottom-color: var(--border);
+            }
+
+            [data-theme="calm"] .header-logo {
+                color: var(--text);
+            }
+
+            [data-theme="calm"] .card {
+                border-radius: 16px;
+                box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+                border-color: var(--border);
+            }
+
+            [data-theme="calm"] .team-card {
+                border-radius: 12px;
+            }
+
+            [data-theme="calm"] .btn {
+                border-radius: 8px;
+            }
+
+            [data-theme="calm"] input[type="text"],
+            [data-theme="calm"] input[type="number"],
+            [data-theme="calm"] textarea,
+            [data-theme="calm"] select {
+                border-radius: 8px;
+                background: #fff;
+                border-color: var(--border);
+            }
+
+            [data-theme="calm"] .q-item {
+                border-radius: 10px;
+            }
+
+            [data-theme="calm"] .preview-box {
+                border-radius: 12px;
+            }
+
+            [data-theme="calm"] .scoreboard tr {
+                border-bottom-color: var(--border);
+            }
+
+            /* ── Calm mode: scoreboard cards ── */
+            [data-theme="calm"] .scoreboard {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+            [data-theme="calm"] .scoreboard tbody {
+                display: contents;
+            }
+            [data-theme="calm"] .scoreboard tr {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                border: 1px solid var(--border);
+                border-radius: 14px;
+                padding: 12px 16px;
+                background: var(--surface);
+                transition: box-shadow 0.2s;
+            }
+            [data-theme="calm"] .scoreboard tr:hover {
+                box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            }
+            [data-theme="calm"] .scoreboard td {
+                padding: 0;
+                border: none;
+            }
+            [data-theme="calm"] .scoreboard td:first-child {
+                width: auto;
+            }
+            [data-theme="calm"] .rank-num {
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            [data-theme="calm"] .score-name {
+                font-size: 15px;
+                font-weight: 600;
+            }
+            [data-theme="calm"] .score-bar-cell {
+                display: none;
+            }
+            [data-theme="calm"] .score-pts {
+                font-size: 26px;
+                font-weight: 800;
+                margin-left: auto;
+            }
+            [data-theme="calm"] .scoreboard tr:first-child {
+                border-color: var(--yellow);
+                background: rgba(251, 191, 36, 0.06);
+            }
+            [data-theme="calm"] .scoreboard tr:first-child .rank-num {
+                background: var(--yellow);
+                color: #000;
+            }
+
+            /* ── Calm mode: timer ── */
+            [data-theme="calm"] .timer-display {
+                font-family: "Nunito", system-ui, sans-serif;
+                font-weight: 800;
+            }
+
+            /* ── Calm mode: activity log ── */
+            [data-theme="calm"] .log-entry {
+                border-radius: 6px;
+                border-left-width: 3px;
+            }
+
+            [data-theme="calm"] .modal {
+                border-radius: 16px;
+            }
+
+            [data-theme="calm"] .toast {
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            }
+
+            [data-theme="calm"] .pts-adjust {
+                border-top-color: var(--border);
+            }
+            [data-theme="calm"] .q-toolbar {
+                border-top-color: var(--border);
+            }
+
+            [data-theme="calm"] .score-dot {
+                width: 10px;
+                height: 10px;
+            }
+
+            *,
+            *::before,
+            *::after {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            html {
+                font-size: 14px;
+            }
+
+            body {
+                background: var(--bg);
+                color: var(--text);
+                font-family: "Inter", system-ui, sans-serif;
+                min-height: 100vh;
+                line-height: 1.5;
+            }
+
+            /* ── Header ── */
+            .header {
+                position: sticky;
+                top: 0;
+                z-index: 200;
+                background: rgba(10, 10, 10, 0.92);
+                -webkit-backdrop-filter: blur(12px);
+                backdrop-filter: blur(12px);
+                border-bottom: 1px solid var(--border);
+                padding: 0 20px;
+                height: 52px;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .header-logo {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 13px;
+                font-weight: 700;
+                letter-spacing: 0.04em;
+                color: var(--text);
+                text-transform: uppercase;
+            }
+            .header-logo .dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: var(--accent);
+                box-shadow: 0 0 10px var(--accent);
+            }
+
+            .header-label {
+                font-size: 11px;
+                color: var(--muted);
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                font-weight: 500;
+            }
+
+            .header-right {
+                margin-left: auto;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .status-pill {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 11px;
+                color: var(--muted);
+                letter-spacing: 0.08em;
+                font-weight: 500;
+                text-transform: uppercase;
+                background: var(--surface);
+                border: 1px solid var(--border);
+                border-radius: 20px;
+                padding: 4px 10px;
+            }
+            .status-pip {
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background: var(--muted2);
+                transition: all 0.3s;
+            }
+            .status-pip.on {
+                background: var(--green);
+                box-shadow: 0 0 8px var(--green);
+                animation: pipPulse 2s ease-in-out infinite;
+            }
+            @keyframes pipPulse {
+                0%,
+                100% {
+                    opacity: 1;
+                }
+                50% {
+                    opacity: 0.4;
+                }
+            }
+            @keyframes urgentPulse {
+                0% {
+                    opacity: 0.6;
+                    transform: scale(0.95);
+                }
+                100% {
+                    opacity: 1;
+                    transform: scale(1.05);
+                }
+            }
+
+            /* ── Grid principal ── */
+            .grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+                grid-template-rows: auto;
+                gap: 12px;
+                padding: 16px;
+                max-width: 1400px;
+                margin: 0 auto;
+            }
+
+            /* ── Cards ── */
+            .card {
+                background: var(--card);
+                border: 1px solid var(--border);
+                border-radius: var(--radius);
+                padding: 16px;
+                position: relative;
+            }
+
+            .card-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 14px;
+            }
+            .card-title {
+                font-size: 11px;
+                font-weight: 700;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                color: var(--muted);
+            }
+            .card-badge {
+                font-size: 10px;
+                font-weight: 700;
+                background: var(--border);
+                color: var(--muted);
+                padding: 2px 7px;
+                border-radius: 10px;
+                letter-spacing: 0.06em;
+            }
+
+            .col-span-2 {
+                grid-column: span 2;
+            }
+            .col-span-3 {
+                grid-column: span 3;
+            }
+
+            /* ── Inputs ── */
+            input[type="text"],
+            input[type="number"],
+            textarea,
+            select {
+                width: 100%;
+                background: var(--surface);
+                border: 1px solid var(--border);
+                border-radius: var(--radius-sm);
+                color: var(--text);
+                font-family: "Inter", sans-serif;
+                font-size: 13px;
+                padding: 8px 11px;
+                outline: none;
+                transition: border-color 0.15s;
+                -webkit-appearance: none;
+                appearance: none;
+            }
+            input:focus,
+            textarea:focus,
+            select:focus {
+                border-color: var(--accent);
+                box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
+            }
+            input::placeholder {
+                color: var(--muted2);
+            }
+
+            /* ── Buttons ── */
+            .btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 6px;
+                border: none;
+                border-radius: var(--radius-sm);
+                cursor: pointer;
+                font-family: "Inter", sans-serif;
+                font-size: 12px;
+                font-weight: 600;
+                letter-spacing: 0.03em;
+                padding: 7px 14px;
+                transition: all 0.15s var(--ease);
+                white-space: nowrap;
+                text-decoration: none;
+            }
+            .btn:hover {
+                transform: translateY(-1px);
+                filter: brightness(1.12);
+            }
+            .btn:active {
+                transform: scale(0.97);
+                filter: brightness(0.95);
+            }
+            .btn:disabled {
+                opacity: 0.35;
+                cursor: not-allowed;
+                transform: none !important;
+            }
+
+            .btn-primary {
+                background: var(--accent);
+                color: #fff;
+            }
+            .btn-green {
+                background: var(--green);
+                color: #fff;
+            }
+            .btn-red {
+                background: var(--red);
+                color: #fff;
+            }
+            .btn-yellow {
+                background: var(--yellow);
+                color: #000;
+            }
+            .btn-ghost {
+                background: transparent;
+                border: 1px solid var(--border2);
+                color: var(--muted);
+            }
+            .btn-ghost:hover {
+                border-color: var(--accent);
+                color: var(--text);
+            }
+            .btn-warning {
+                background: var(--yellow);
+                color: #000;
+            }
+            .btn-sm {
+                font-size: 11px;
+                padding: 5px 10px;
+            }
+            .btn-icon {
+                padding: 6px 8px;
+                font-size: 13px;
+            }
+
+            /* ── Form row ── */
+            .form-row {
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+            }
+            .input-row {
+                display: flex;
+                gap: 6px;
+            }
+            .input-row input {
+                flex: 1;
+            }
+
+            /* ── Question list ── */
+            .q-list {
+                margin-top: 10px;
+                max-height: 280px;
+                overflow-y: auto;
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                scrollbar-width: thin;
+                scrollbar-color: var(--border2) transparent;
+                -webkit-overflow-scrolling: touch;
+            }
+            .q-list::-webkit-scrollbar {
+                width: 6px;
+            }
+            .q-list::-webkit-scrollbar-track {
+                background: transparent;
+            }
+            .q-list::-webkit-scrollbar-thumb {
+                background: var(--border2);
+                border-radius: 3px;
+            }
+            .q-list::-webkit-scrollbar-thumb:hover {
+                background: var(--muted);
+            }
+            .q-list::-webkit-scrollbar {
+                width: 4px;
+            }
+            .q-list::-webkit-scrollbar-thumb {
+                background: var(--border2);
+                border-radius: 4px;
+            }
+
+            .q-item {
+                background: var(--surface);
+                border: 1px solid var(--border);
+                border-radius: var(--radius-sm);
+                padding: 9px 11px;
+                display: flex;
+                align-items: flex-start;
+                gap: 8px;
+                cursor: pointer;
+                transition:
+                    border-color 0.12s,
+                    background 0.12s;
+                position: relative;
+            }
+            .q-item:hover {
+                border-color: var(--border2);
+                background: #1a1a1a;
+            }
+            .q-item.selected {
+                border-color: var(--accent);
+                background: rgba(124, 58, 237, 0.06);
+            }
+            .q-item.projected {
+                border-color: var(--green);
+            }
+
+            .q-num {
+                font-size: 11px;
+                color: var(--muted);
+                min-width: 18px;
+                padding-top: 2px;
+                font-weight: 600;
+            }
+            .q-body {
+                flex: 1;
+                min-width: 0;
+            }
+            .q-text {
+                font-size: 12px;
+                line-height: 1.4;
+                font-weight: 500;
+            }
+            .q-ans {
+                font-size: 11px;
+                color: var(--muted);
+                margin-top: 2px;
+            }
+
+            .q-actions {
+                display: flex;
+                gap: 3px;
+                opacity: 0;
+                transition: opacity 0.12s;
+                flex-shrink: 0;
+            }
+            .q-item:hover .q-actions {
+                opacity: 1;
+            }
+
+            /* ── Edit form inline ── */
+            .q-edit-form {
+                margin-top: 8px;
+                padding: 10px;
+                background: var(--bg);
+                border: 1px solid var(--accent);
+                border-radius: var(--radius-sm);
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+            }
+            .q-edit-form.hidden {
+                display: none;
+            }
+
+            /* ── Action bar below question list ── */
+            .q-toolbar {
+                display: flex;
+                gap: 6px;
+                margin-top: 10px;
+                padding-top: 10px;
+                border-top: 1px solid var(--border);
+                flex-wrap: wrap;
+            }
+
+            /* ── Preview box ── */
+            .preview-box {
+                background: var(--surface);
+                border: 1px solid var(--border);
+                border-radius: var(--radius-sm);
+                padding: 12px;
+                margin-top: 10px;
+            }
+            .preview-label {
+                font-size: 10px;
+                font-weight: 700;
+                letter-spacing: 0.14em;
+                color: var(--accent);
+                text-transform: uppercase;
+                margin-bottom: 6px;
+            }
+            .preview-text {
+                font-size: 13px;
+                line-height: 1.5;
+            }
+            .preview-ans {
+                margin-top: 8px;
+                padding: 8px 10px;
+                background: var(--bg);
+                border-radius: 4px;
+                border: 1px solid var(--border);
+                font-size: 12px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+            .preview-ans-text {
+                flex: 1;
+                color: var(--green);
+                font-weight: 600;
+            }
+            .preview-ans-hidden {
+                color: var(--muted2);
+                font-style: italic;
+            }
+
+            .project-bar {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+            .project-status {
+                flex: 1;
+                font-size: 12px;
+                color: var(--muted);
+                min-width: 120px;
+            }
+
+            /* ── Timer ── */
+            .timer-display {
+                font-size: 56px;
+                font-weight: 900;
+                line-height: 1;
+                text-align: center;
+                letter-spacing: -0.02em;
+                color: var(--text);
+                font-variant-numeric: tabular-nums;
+                margin: 8px 0 6px;
+                transition: color 0.3s;
+            }
+            .timer-display.urgent {
+                color: var(--red);
+            }
+
+            .timer-bar-wrap {
+                height: 3px;
+                background: var(--border);
+                border-radius: 2px;
+                overflow: hidden;
+                margin-bottom: 12px;
+            }
+            .timer-bar-fill {
+                height: 100%;
+                border-radius: 2px;
+                background: var(--accent);
+                transform-origin: left;
+                transition:
+                    transform 0.9s linear,
+                    background 0.3s;
+            }
+            .timer-bar-fill.urgent {
+                background: var(--red);
+            }
+
+            .timer-controls {
+                display: flex;
+                gap: 6px;
+                flex-wrap: wrap;
+                align-items: center;
+            }
+            .timer-controls input[type="number"] {
+                width: 62px;
+                text-align: center;
+            }
+
+            /* ── Points ── */
+            .team-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+                margin-bottom: 12px;
+            }
+
+            .team-card {
+                border-radius: var(--radius-sm);
+                padding: 12px;
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+                border: 1px solid transparent;
+                position: relative;
+                overflow: hidden;
+                transition: border-color 0.15s;
+            }
+
+            .team-jovenes {
+                background: rgba(124, 58, 237, 0.1);
+                border-color: rgba(124, 58, 237, 0.2);
+            }
+            .team-damas {
+                background: rgba(219, 39, 119, 0.1);
+                border-color: rgba(219, 39, 119, 0.2);
+            }
+            .team-caball {
+                background: rgba(2, 132, 199, 0.1);
+                border-color: rgba(2, 132, 199, 0.2);
+            }
+            .team-ninos {
+                background: rgba(5, 150, 105, 0.1);
+                border-color: rgba(5, 150, 105, 0.2);
+            }
+
+            .team-name {
+                font-size: 11px;
+                font-weight: 700;
+                letter-spacing: 0.06em;
+                text-transform: uppercase;
+            }
+            .team-jovenes .team-name {
+                color: #a78bfa;
+            }
+            .team-damas .team-name {
+                color: #f472b6;
+            }
+            .team-caball .team-name {
+                color: #38bdf8;
+            }
+            .team-ninos .team-name {
+                color: #34d399;
+            }
+
+            .team-pts-row {
+                display: flex;
+                gap: 5px;
+            }
+            .team-pts-row .btn {
+                flex: 1;
+                font-size: 11px;
+                padding: 5px 0;
+            }
+
+            /* ── Manual adjust ── */
+            .pts-adjust {
+                display: flex;
+                gap: 6px;
+                align-items: center;
+                padding-top: 10px;
+                border-top: 1px solid var(--border);
+                flex-wrap: wrap;
+            }
+            .pts-adjust select {
+                width: auto;
+            }
+            .pts-adjust input {
+                width: 72px;
+            }
+
+            /* ── Scoreboard ── */
+            .scoreboard {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            .scoreboard tr {
+                border-bottom: 1px solid var(--border);
+            }
+            .scoreboard tr:last-child {
+                border-bottom: none;
+            }
+            .scoreboard td {
+                padding: 8px 6px;
+                vertical-align: middle;
+            }
+
+            .rank-num {
+                width: 22px;
+                height: 22px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 11px;
+                font-weight: 700;
+            }
+            .rank-1 {
+                background: #f59e0b;
+                color: #000;
+            }
+            .rank-2 {
+                background: #94a3b8;
+                color: #000;
+            }
+            .rank-3 {
+                background: #92400e;
+                color: #fff;
+            }
+            .rank-4 {
+                background: var(--border);
+                color: var(--muted);
+            }
+
+            .score-dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                display: inline-block;
+                margin-right: 6px;
+                flex-shrink: 0;
+            }
+            .score-name {
+                font-size: 13px;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+            }
+            .score-pts {
+                font-size: 18px;
+                font-weight: 900;
+                text-align: right;
+                font-variant-numeric: tabular-nums;
+                transition: all 0.3s;
+            }
+            .score-bar-cell {
+                width: 80px;
+            }
+            .score-mini-bar {
+                height: 3px;
+                border-radius: 2px;
+                transform-origin: left;
+                transition: transform 0.5s var(--ease);
+            }
+
+            /* ── Activity log ── */
+            .activity-log {
+                display: flex;
+                flex-direction: column;
+                gap: 3px;
+                max-height: 180px;
+                overflow-y: auto;
+                scrollbar-width: thin;
+                scrollbar-color: var(--border2) transparent;
+                -webkit-overflow-scrolling: touch;
+            }
+            .activity-log::-webkit-scrollbar {
+                width: 6px;
+            }
+            .activity-log::-webkit-scrollbar-track {
+                background: transparent;
+            }
+            .activity-log::-webkit-scrollbar-thumb {
+                background: var(--border2);
+                border-radius: 3px;
+            }
+            .activity-log::-webkit-scrollbar-thumb:hover {
+                background: var(--muted);
+            }
+
+            .log-entry {
+                font-size: 11px;
+                padding: 4px 8px;
+                background: var(--surface);
+                border-radius: 3px;
+                color: var(--muted);
+                line-height: 1.4;
+                border-left: 2px solid var(--border2);
+                transition: all 0.2s;
+            }
+            .log-entry:first-child {
+                color: var(--text);
+                border-left-color: var(--accent);
+            }
+
+            /* ── Toast ── */
+            .toast {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: var(--card);
+                border: 1px solid var(--border2);
+                border-radius: var(--radius);
+                padding: 9px 16px;
+                font-size: 12px;
+                font-weight: 500;
+                color: var(--text);
+                z-index: 1000;
+                transform: translateY(12px);
+                opacity: 0;
+                transition: all 0.25s var(--ease);
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+                pointer-events: none;
+            }
+            .toast.show {
+                transform: translateY(0);
+                opacity: 1;
+            }
+
+            /* ── Modal ── */
+            .modal-overlay {
+                position: fixed;
+                inset: 0;
+                z-index: 500;
+                background: rgba(0, 0, 0, 0.8);
+                -webkit-backdrop-filter: blur(6px);
+                backdrop-filter: blur(6px);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.2s;
+            }
+            .modal-overlay.show {
+                opacity: 1;
+                pointer-events: all;
+            }
+
+            .modal {
+                background: var(--card);
+                border: 1px solid var(--border2);
+                border-radius: 12px;
+                padding: 24px 28px;
+                min-width: 340px;
+                max-width: 460px;
+                width: 90%;
+                box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
+                transform: scale(0.93) translateY(8px);
+                transition: transform 0.25s cubic-bezier(0.34, 1.3, 0.64, 1);
+            }
+            .modal-overlay.show .modal {
+                transform: scale(1) translateY(0);
+            }
+
+            .modal-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 18px;
+            }
+            .modal-title {
+                font-size: 13px;
+                font-weight: 700;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: var(--text);
+            }
+            .modal-close {
+                background: transparent;
+                border: none;
+                color: var(--muted);
+                cursor: pointer;
+                font-size: 16px;
+                width: 28px;
+                height: 28px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 4px;
+                transition: all 0.15s;
+            }
+            .modal-close:hover {
+                background: var(--border);
+                color: var(--text);
+            }
+
+            .shortcut-grid {
+                display: grid;
+                grid-template-columns: 80px 1fr;
+                gap: 0;
+            }
+            .shortcut-grid .section-label {
+                grid-column: span 2;
+                font-size: 10px;
+                font-weight: 700;
+                letter-spacing: 0.15em;
+                color: var(--muted);
+                text-transform: uppercase;
+                padding: 10px 0 4px;
+                border-bottom: 1px solid var(--border);
+                margin-bottom: 4px;
+            }
+            .shortcut-row {
+                display: contents;
+            }
+            .shortcut-row > * {
+                padding: 4px 0;
+                display: flex;
+                align-items: center;
+            }
+            .kbd {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                background: var(--surface);
+                border: 1px solid var(--border2);
+                border-radius: 4px;
+                font-family: monospace;
+                font-size: 11px;
+                color: var(--accent);
+                padding: 2px 7px;
+                min-width: 26px;
+                box-shadow: 0 2px 0 rgba(0, 0, 0, 0.4);
+            }
+            .shortcut-desc {
+                font-size: 12px;
+                color: var(--muted);
+                padding-left: 12px;
+            }
+
+            /* ── Import hidden input ── */
+            #importFile {
+                display: none;
+            }
+
+            /* ── Points input row ── */
+            .pts-input-row {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 8px;
+            }
+            .pts-input-row label {
+                font-size: 12px;
+                color: var(--muted);
+                white-space: nowrap;
+            }
+            .pts-input-row input {
+                width: 72px;
+            }
+
+            /* ── Separator label ── */
+            .sep-label {
+                font-size: 10px;
+                font-weight: 700;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                color: var(--muted2);
+                padding: 8px 0 4px;
+            }
+
+            /* ── anim disabled badge ── */
+            .anim-badge {
+                position: fixed;
+                top: 14px;
+                right: 72px;
+                z-index: 300;
+                background: rgba(239, 68, 68, 0.1);
+                border: 1px solid var(--red);
+                color: var(--red);
+                font-size: 10px;
+                font-weight: 700;
+                letter-spacing: 0.1em;
+                padding: 3px 8px;
+                border-radius: 4px;
+                display: none;
+                text-transform: uppercase;
+            }
+            .anim-badge.show {
+                display: block;
+            }
+
+            /* ── Responsive ── */
+            @media (max-width: 1100px) {
+                .grid {
+                    grid-template-columns: 1fr 1fr;
+                }
+                .col-span-2 {
+                    grid-column: span 2;
+                }
+                .col-span-3 {
+                    grid-column: span 2;
+                }
+            }
+            @media (max-width: 700px) {
+                .grid {
+                    grid-template-columns: 1fr;
+                    padding: 10px;
+                }
+                .col-span-2,
+                .col-span-3 {
+                    grid-column: span 1;
+                }
+            }
+
+            /* ── Utility classes ── */
+            .flex-row {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                flex-wrap: wrap;
+            }
+            .flex-row-nw {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+            .flex-row-nw-g8 {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            .flex-row-nw-g4 {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+            }
+            .flex {
+                display: flex;
+            }
+            .flex-col {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+            .flex-1 {
+                flex: 1;
+            }
+            .gap-4 {
+                gap: 4px;
+            }
+            .gap-6 {
+                gap: 6px;
+            }
+            .gap-8 {
+                gap: 8px;
+            }
+            .g-24 {
+                gap: 24px;
+            }
+            .mt-4 {
+                margin-top: 4px;
+            }
+            .mt-6 {
+                margin-top: 6px;
+            }
+            .mt-8 {
+                margin-top: 8px;
+            }
+            .mt-10 {
+                margin-top: 10px;
+            }
+            .mt-12 {
+                margin-top: 12px;
+            }
+            .mt-16 {
+                margin-top: 16px;
+            }
+            .mb-8 {
+                margin-bottom: 8px;
+            }
+            .mb-12 {
+                margin-bottom: 12px;
+            }
+            .pt-10 {
+                padding-top: 10px;
+            }
+            .pt-12 {
+                padding-top: 12px;
+            }
+            .text-xs {
+                font-size: 10px;
+            }
+            .text-sm {
+                font-size: 11px;
+            }
+            .text-muted {
+                color: var(--muted);
+            }
+            .text-muted2 {
+                color: var(--muted2);
+            }
+            .text-center {
+                text-align: center;
+            }
+            .fw-700 {
+                font-weight: 700;
+            }
+            .fw-900 {
+                font-weight: 900;
+            }
+            .font-black {
+                font-weight: 900;
+            }
+            .word-break {
+                word-break: break-word;
+                overflow-wrap: break-word;
+            }
+            .grid-cols-3 {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .ls-005 {
+                letter-spacing: 0.05em;
+            }
+            .ls-008 {
+                letter-spacing: 0.08em;
+            }
+            .ls-01 {
+                letter-spacing: 0.1em;
+            }
+            .ttu {
+                text-transform: uppercase;
+            }
+            .cp {
+                cursor: pointer;
+            }
+            .usn {
+                -webkit-user-select: none;
+                user-select: none;
+            }
+            .w-14 {
+                width: 14px;
+            }
+            .w-16 {
+                width: 16px;
+            }
+            .w-70 {
+                width: 70px;
+            }
+            .bd-top {
+                border-top: 1px solid var(--border);
+            }
+            .bd-top2 {
+                border-top: 1px solid var(--border2);
+            }
+            .self-center {
+                align-self: center;
+            }
+            .justify-center {
+                justify-content: center;
+            }
+            .justify-between {
+                justify-content: space-between;
+            }
+            .flex-wrap {
+                flex-wrap: wrap;
+            }
+            .mr-auto {
+                margin-right: auto;
+            }
+            .p-14-8 {
+                padding: 14px 8px;
+            }
+            .p-10 {
+                padding: 10px;
+            }
+            .br-3 {
+                border-radius: 3px;
+            }
+            .br-4 {
+                border-radius: 4px;
+            }
+            .font-mono {
+                font-family: monospace;
+            }
+            .kbd-style {
+                background: var(--border);
+                padding: 1px 5px;
+                border-radius: 3px;
+                font-family: monospace;
+                font-size: 10px;
+            }
+            .hidden {
+                display: none;
+            }
+            .sr-only {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                padding: 0;
+                margin: -1px;
+                overflow: hidden;
+                clip: rect(0, 0, 0, 0);
+                white-space: nowrap;
+                border: 0;
+            }
+            .w-30 {
+                width: 30px;
+            }
+            .fd-col {
+                flex-direction: column;
+            }
+            .ai-center {
+                align-items: center;
+            }
+            .flex-ai-c-g6 {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+
+            /* ══════════════════════════════════════════════════════
+               SAMPLER DE AUDIO
+               ══════════════════════════════════════════════════════ */
+            .sampler-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+                margin-top: 10px;
+            }
+            .sampler-slot {
+                background: var(--surface);
+                border: 1px solid var(--border2);
+                border-radius: var(--radius-sm);
+                padding: 10px;
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+                position: relative;
+                min-height: 140px;
+            }
+            .sampler-slot.has-audio {
+                border-color: var(--accent);
+            }
+            .sampler-slot.playing {
+                box-shadow: 0 0 20px rgba(124, 58, 237, 0.3);
+            }
+            .sampler-slot-header {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+            .sampler-slot-num {
+                font-size: 10px;
+                font-weight: 900;
+                color: var(--muted2);
+                letter-spacing: 0.1em;
+                min-width: 16px;
+            }
+            .sampler-slot-file {
+                font-size: 10px;
+                color: var(--muted);
+                flex: 1;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            .sampler-slot-dur {
+                font-size: 10px;
+                color: var(--muted2);
+                font-family: monospace;
+                letter-spacing: 0.05em;
+            }
+            .sampler-trim-row {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+            }
+            .sampler-trim-row label {
+                font-size: 9px;
+                color: var(--muted);
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                min-width: 28px;
+            }
+            .sampler-trim-row input[type="range"] {
+                flex: 1;
+                height: 4px;
+                -webkit-appearance: none;
+                appearance: none;
+                background: var(--border2);
+                border-radius: 2px;
+                outline: none;
+                cursor: pointer;
+            }
+            .sampler-trim-row input[type="range"]::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background: var(--accent);
+                border: 2px solid #000;
+                cursor: pointer;
+            }
+            .sampler-trim-row input[type="range"]::-moz-range-thumb {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background: var(--accent);
+                border: 2px solid #000;
+                cursor: pointer;
+            }
+            .sampler-trim-time {
+                font-size: 9px;
+                color: var(--muted);
+                font-family: monospace;
+                min-width: 36px;
+                text-align: right;
+            }
+            .sampler-actions {
+                display: flex;
+                gap: 4px;
+                margin-top: auto;
+            }
+            .sampler-actions .btn {
+                flex: 1;
+                font-size: 10px;
+                padding: 4px 6px;
+            }
+            .sampler-status-dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                display: inline-block;
+                flex-shrink: 0;
+            }
+            .sampler-status-dot.empty {
+                background: var(--muted2);
+            }
+            .sampler-status-dot.loaded {
+                background: var(--green);
+                box-shadow: 0 0 8px rgba(16,185,129,0.5);
+            }
+            .sampler-status-dot.playing {
+                background: var(--accent);
+                animation: samplerPulse 0.5s ease-in-out infinite alternate;
+            }
+            @keyframes samplerPulse {
+                0% { box-shadow: 0 0 4px rgba(124,58,237,0.3); }
+                100% { box-shadow: 0 0 14px rgba(124,58,237,0.8); transform: scale(1.2); }
+            }
+            .sampler-empty-state {
+                text-align: center;
+                padding: 30px 10px;
+                color: var(--muted2);
+                font-size: 11px;
+                letter-spacing: 0.05em;
+                grid-column: 1 / -1;
+            }
+
+            /* ══════════════════════════════════════════════════════
+               MEJORAS GRÁFICAS Y ANIMACIONES AÑADIDAS
+               ══════════════════════════════════════════════════════ */
+
+            .card {
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+                transition:
+                    transform 0.3s var(--ease),
+                    box-shadow 0.3s var(--ease);
+            }
+            .card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            }
+
+            .header {
+                background: rgba(10, 10, 10, 0.85);
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            }
+
+            .btn-primary,
+            .btn-green,
+            .btn-yellow {
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+                position: relative;
+                overflow: hidden;
+            }
+            .btn-primary::after,
+            .btn-green::after,
+            .btn-yellow::after {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 50%;
+                height: 100%;
+                background: linear-gradient(
+                    to right,
+                    rgba(255, 255, 255, 0) 0%,
+                    rgba(255, 255, 255, 0.2) 50%,
+                    rgba(255, 255, 255, 0) 100%
+                );
+                transform: skewX(-25deg);
+                transition: left 0.6s ease;
+            }
+            .btn-primary:hover::after,
+            .btn-green:hover::after,
+            .btn-yellow:hover::after {
+                left: 200%;
+            }
+
+            .q-item {
+                border-left: 4px solid transparent;
+                transition: all 0.2s ease-in-out;
+            }
+            .q-item:hover {
+                transform: translateX(4px);
+            }
+            .q-item.selected {
+                border-left: 4px solid var(--accent);
+                background: linear-gradient(
+                    90deg,
+                    rgba(124, 58, 237, 0.15) 0%,
+                    transparent 100%
+                );
+                box-shadow: inset 0 0 10px rgba(124, 58, 237, 0.05);
+            }
+
+            .status-pip.on {
+                box-shadow: 0 0 12px var(--green), 0 0 4px var(--green) inset;
+            }
+
+            .toast {
+                background: linear-gradient(135deg, var(--card), var(--surface));
+                border-left: 4px solid var(--accent);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(8px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <header class="header">
+            <div class="header-logo">
+                <div class="dot"></div>
+                Campeonísimo Bíblico
+            </div>
+            <span class="header-label">Panel de Control</span>
+            <div class="header-right">
+                <button
+                    class="btn btn-ghost btn-sm"
+                    onclick="toggleTheme()"
+                    id="themeBtn"
+                >
+                    🎨 Tema
+                </button>
+                <button class="btn btn-ghost btn-sm" onclick="mostrarAyuda()">
+                    ⌨ Atajos
+                </button>
+                <div class="status-pill">
+                    <div class="status-pip" id="statusPip"></div>
+                    <span id="statusLabel">Conectando…</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="grid">
+            <!-- ── PREGUNTAS ── -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Banco de Preguntas</span>
+                    <span class="card-badge" id="qCount">0</span>
+                </div>
+
+                <div class="form-row">
+                    <input
+                        type="text"
+                        id="inPregunta"
+                        placeholder="Escribe la pregunta…"
+                    />
+                    <input
+                        type="text"
+                        id="inRespuesta"
+                        placeholder="Respuesta correcta…"
+                    />
+                    <select id="inCategoria" class="form-select" style="flex:0 0 auto;max-width:140px;font-size:11px;padding:4px 6px;">
+                        <option value="">Sin categoría</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="crearPregunta()">
+                        + Agregar
+                    </button>
+                </div>
+
+                <!-- Multiple choice toggle -->
+                <div class="mt-6 flex-row-nw-g8 text-sm">
+                    <label class="flex-row-nw-g4 cp usn">
+                        <input
+                            type="checkbox"
+                            id="chkMulti"
+                            onchange="toggleMultiChoice()"
+                        />
+                        ☐ Opción múltiple (A, B, C)
+                    </label>
+                </div>
+                <div
+                    id="multiChoiceFields"
+                    class="hidden mt-6 gap-6 fd-col"
+                    style="
+                        background: var(--bg2);
+                        padding: 8px;
+                        border-radius: 4px;
+                    "
+                >
+                    <div class="flex-ai-c-g6">
+                        <span class="fw-700 w-16">A</span>
+                        <input
+                            type="text"
+                            id="inOptA"
+                            placeholder="Opción A…"
+                            class="flex-1"
+                        />
+                        <label
+                            class="cp usn flex-row-nw-g4"
+                            title="Marcar como respuesta correcta"
+                        >
+                            <input
+                                type="radio"
+                                name="rcRadio"
+                                value="0"
+                                checked
+                                onchange="onRcChange()"
+                            />
+                            Correcta
+                        </label>
+                    </div>
+                    <div class="flex-ai-c-g6">
+                        <span class="fw-700 w-16">B</span>
+                        <input
+                            type="text"
+                            id="inOptB"
+                            placeholder="Opción B…"
+                            class="flex-1"
+                        />
+                        <label
+                            class="cp usn flex-row-nw-g4"
+                            title="Marcar como respuesta correcta"
+                        >
+                            <input
+                                type="radio"
+                                name="rcRadio"
+                                value="1"
+                                onchange="onRcChange()"
+                            />
+                            Correcta
+                        </label>
+                    </div>
+                    <div class="flex-ai-c-g6">
+                        <span class="fw-700 w-16">C</span>
+                        <input
+                            type="text"
+                            id="inOptC"
+                            placeholder="Opción C…"
+                            class="flex-1"
+                        />
+                        <label
+                            class="cp usn flex-row-nw-g4"
+                            title="Marcar como respuesta correcta"
+                        >
+                            <input
+                                type="radio"
+                                name="rcRadio"
+                                value="2"
+                                onchange="onRcChange()"
+                            />
+                            Correcta
+                        </label>
+                    </div>
+                    <div class="text-xs text-muted">
+                        ○ Radio = marcar la correcta
+                    </div>
+                </div>
+
+                <!-- Category filter bar -->
+                <div class="flex-row-nw-g4" style="margin:8px 0 4px;align-items:center;">
+                    <label style="font-size:10px;font-weight:600;color:var(--muted2);white-space:nowrap;">Filtrar:</label>
+                    <select id="filterCategoria" onchange="filtrarPreguntas()" style="flex:1;font-size:11px;padding:3px 6px;border-radius:3px;border:1px solid var(--border);background:var(--bg2);color:var(--text);">
+                        <option value="">Todas las categorías</option>
+                    </select>
+                </div>
+                <div class="q-list" id="qList"></div>
+
+                <div class="q-toolbar">
+                    <button
+                        class="btn btn-ghost btn-sm"
+                        onclick="exportarPreguntas()"
+                        title="Descargar banco como JSON"
+                    >
+                        ↓ Exportar
+                    </button>
+                    <button
+                        class="btn btn-ghost btn-sm"
+                        onclick="document.getElementById('importFile').click()"
+                        title="Cargar banco desde JSON"
+                    >
+                        ↑ Importar
+                    </button>
+                    <input
+                        type="file"
+                        id="importFile"
+                        accept=".json"
+                        onchange="importarPreguntas(event)"
+                    />
+                </div>
+            </div>
+
+            <!-- ── PROYECTAR ── -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Proyectar</span>
+                </div>
+
+                <div class="project-bar">
+                    <span class="project-status" id="actualLabel"
+                        >Sin selección</span
+                    >
+                    <button
+                        class="btn btn-primary"
+                        id="btnProyectar"
+                        onclick="proyectarActual()"
+                        disabled
+                    >
+                        ▶ Proyectar
+                    </button>
+                </div>
+
+                <div class="preview-box hidden" id="actualPreview">
+                    <div class="preview-label">Proyectando ahora</div>
+                    <div class="preview-text" id="apTexto"></div>
+                    <div class="preview-ans">
+                        <span class="text-xs text-muted ls-01 ttu fw-700"
+                            >Resp:</span
+                        >
+                        <span class="preview-ans-text" id="apResp"></span>
+                        <button
+                            class="btn btn-green btn-sm hidden"
+                            id="btnRevelar"
+                            onclick="toggleRespuesta(true)"
+                        >
+                            Revelar
+                        </button>
+                        <button
+                            class="btn btn-ghost btn-sm hidden"
+                            id="btnOcultar"
+                            onclick="toggleRespuesta(false)"
+                        >
+                            Ocultar
+                        </button>
+                        <button
+                            class="btn btn-yellow btn-sm hidden"
+                            id="btnMostrarOpciones"
+                            onclick="mostrarOpciones()"
+                        >
+                            📋 Mostrar opciones
+                        </button>
+                    </div>
+                    <div id="opcionBtns" class="hidden gap-6 mt-8">
+                        <button
+                            class="btn btn-ghost flex-1 fw-900 p-10"
+                            style="font-size: 16px"
+                            onclick="seleccionarOpcion(0)"
+                        >
+                            A
+                        </button>
+                        <button
+                            class="btn btn-ghost flex-1 fw-900 p-10"
+                            style="font-size: 16px"
+                            onclick="seleccionarOpcion(1)"
+                        >
+                            B
+                        </button>
+                        <button
+                            class="btn btn-ghost flex-1 fw-900 p-10"
+                            style="font-size: 16px"
+                            onclick="seleccionarOpcion(2)"
+                        >
+                            C
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Navegación de preguntas -->
+                <div class="flex gap-6 mt-10 pt-10 bd-top">
+                    <button
+                        class="btn btn-ghost flex-1"
+                        onclick="irAPreguntaAnterior()"
+                    >
+                        ← Anterior
+                    </button>
+                    <button
+                        class="btn btn-ghost flex-1"
+                        onclick="irAPreguntaSiguiente()"
+                    >
+                        Siguiente →
+                    </button>
+                </div>
+            </div>
+
+            <!-- ── TEMPORIZADOR ── -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Temporizador</span>
+                </div>
+
+                <div class="timer-display" id="timerDisplay">00</div>
+                <div class="timer-bar-wrap">
+                    <div
+                        class="timer-bar-fill"
+                        id="timerBar"
+                        style="transform: scaleX(1)"
+                    ></div>
+                </div>
+                <div class="timer-controls">
+                    <input
+                        type="number"
+                        id="inSegundos"
+                        value="45"
+                        min="5"
+                        max="300"
+                    />
+                    <span class="text-sm text-muted self-center">seg</span>
+                    <button class="btn btn-green" onclick="iniciarTimer()">
+                        ▶ Iniciar
+                    </button>
+                    <button class="btn btn-ghost" onclick="reiniciarTimer()">
+                        ↺ Reiniciar
+                    </button>
+                    <button class="btn btn-ghost" onclick="pararTimer()">
+                        ■ Parar
+                    </button>
+                </div>
+            </div>
+
+            <!-- ── DISPLAY ── -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Display</span>
+                </div>
+                <div class="flex fd-col gap-8">
+                    <div class="flex gap-6">
+                        <button
+                            class="btn btn-ghost btn-sm flex-1 text-sm"
+                            id="btnKiosko"
+                            onclick="toggleKiosko()"
+                        >
+                            🖥 Kiosko
+                        </button>
+                        <button
+                            class="btn btn-ghost btn-sm flex-1 text-sm"
+                            id="btnOverlays"
+                            onclick="resetOverlays()"
+                        >
+                            🧹 Overlays
+                        </button>
+                        <button
+                            class="btn btn-ghost btn-sm flex-1 text-sm"
+                            id="btnAnimaciones"
+                            onclick="toggleAnimaciones()"
+                        >
+                            ⚡ Animaciones
+                        </button>
+                    </div>
+                    <div class="flex gap-6">
+                        <button
+                            class="btn btn-ghost btn-sm flex-1 text-sm"
+                            id="btnBlackScreen"
+                            onclick="toggleBlackScreen()"
+                        >
+                            ⬛ Black Screen
+                        </button>
+                        <button
+                            class="btn btn-ghost btn-sm flex-1 text-sm"
+                            id="btnFreeze"
+                            onclick="toggleFreeze()"
+                        >
+                            ⏸ Freeze
+                        </button>
+                        <button
+                            class="btn btn-red btn-sm flex-1 text-sm font-black"
+                            onclick="salirTodo()"
+                        >
+                            🚪 Salir
+                        </button>
+                        <button
+                            class="btn btn-ghost btn-sm flex-1 text-sm"
+                            id="btnClean"
+                            onclick="toggleClean()"
+                        >
+                            🖼️ Clean
+                        </button>
+                        <button
+                            class="btn btn-ghost btn-sm flex-1 text-sm"
+                            id="btnFinalRound"
+                            onclick="toggleFinalRound()"
+                        >
+                            🏆 Final
+                        </button>
+                        <button
+                            class="btn btn-ghost btn-sm flex-1 text-sm"
+                            id="btnFinalResults"
+                            onclick="showFinalResults()"
+                        >
+                            🏆 Resultados
+                        </button>
+                        <button
+                            class="btn btn-ghost btn-sm flex-1 text-sm"
+                            id="btnHideFinalResults"
+                            onclick="hideFinalResults()"
+                            style="display:none;"
+                        >
+                            🙈 Ocultar
+                        </button>
+                    </div>
+                    <div class="flex gap-6">
+                        <button class="btn btn-ghost btn-sm flex-1 text-sm" onclick="exportarJSON()">📥 Exportar JSON</button>
+                        <button class="btn btn-ghost btn-sm flex-1 text-sm" onclick="exportarImagen()">📸 Exportar Imagen</button>
+                    </div>
+                    <div class="text-xs text-muted2 text-center ls-005">
+                        <span><kbd class="kbd-style">K</kbd> Kiosko</span>
+                        &nbsp;·&nbsp;
+                        <span><kbd class="kbd-style">O</kbd> Overlays</span>
+                        &nbsp;·&nbsp;
+                        <span><kbd class="kbd-style">A</kbd> Animaciones</span>
+                        &nbsp;·&nbsp;
+                        <span><kbd class="kbd-style">B</kbd> Black Screen</span>
+                        &nbsp;·&nbsp;
+                        <span><kbd class="kbd-style">F</kbd> Freeze</span>
+                        &nbsp;·&nbsp;
+                        <span><kbd class="kbd-style">S</kbd> Salir</span>
+                        &nbsp;·&nbsp;
+                        <span><kbd class="kbd-style">C</kbd> Clean bg</span>
+                        &nbsp;·&nbsp;
+                        <span><kbd class="kbd-style">R</kbd> Ronda Final</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── GRUPOS ── -->
+            <div class="card col-span-2" id="gruposPanel">
+                <div class="card-header">
+                    <span class="card-title">👥 Grupos</span>
+                    <span class="card-badge" id="gruposCount">4</span>
+                </div>
+                <div class="flex-col gap-4" id="gruposConfigContainer" style="padding:12px 16px;">
+                    <div id="gruposList"></div>
+                    <div class="flex-row gap-4" style="margin-top:4px;">
+                        <button class="btn btn-secondary text-sm" onclick="addGrupo()" id="btnAddGrupo">+ Añadir grupo</button>
+                        <button class="btn btn-primary text-sm" onclick="guardarGrupos()" id="btnGuardarGrupos">💾 Guardar</button>
+                        <span id="gruposStatus" style="font-size:0.8rem;color:var(--success);opacity:0;transition:opacity .3s;">✓ Guardado</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── RULETA ── -->
+            <div class="card col-span-2" id="ruletaPanel">
+                <div class="card-header">
+                    <span class="card-title">🎰 Ruleta</span>
+                    <span class="card-badge" id="ruletaStatus">Inactiva</span>
+                </div>
+
+                <div class="flex-row gap-8">
+                    <button
+                        class="btn btn-primary flex-1 text-sm"
+                        onclick="iniciarRuleta()"
+                        id="btnIniciarRuleta"
+                        style="
+                            padding: 12px 8px;
+                            background: linear-gradient(
+                                135deg,
+                                #7c3aed,
+                                #a855f7
+                            );
+                        "
+                    >
+                        🎰 Iniciar Ruleta
+                    </button>
+                    <button
+                        class="btn btn-yellow btn-sm hidden text-sm"
+                        onclick="seleccionarRuleta()"
+                        id="btnSeleccionarRuleta"
+                    >
+                        ⏭ Seleccionar
+                    </button>
+                    <button
+                        class="btn btn-ghost btn-sm hidden"
+                        onclick="cerrarRuleta()"
+                        id="btnCerrarRuleta"
+                    >
+                        ✕ Cerrar
+                    </button>
+                </div>
+
+                <div class="preview-box hidden mt-10" id="ruletaPreview">
+                    <div
+                        class="flex g-24 justify-center mb-8 text-muted flex-wrap"
+                    >
+                        <span
+                            >N° Palabra:
+                            <strong id="ruletaNumPalCtrl">--</strong></span
+                        >
+                        <span
+                            >N° Cantante:
+                            <strong id="ruletaNumCantCtrl">--</strong></span
+                        >
+                        <span
+                            >Categoría:
+                            <strong id="ruletaCatCtrl">--</strong></span
+                        >
+                    </div>
+                    <div class="preview-label">🎯 Resultado</div>
+                    <div
+                        class="preview-text text-center fw-900 word-break"
+                        id="ruletaResultadoDisplay"
+                        style="
+                            font-size: clamp(1.5rem, 3vw, 2.5rem);
+                            letter-spacing: -0.02em;
+                        "
+                    ></div>
+                </div>
+
+                <!-- Timer controls (shown when wheel result is active) -->
+                <div id="ruletaTimerControls" class="hidden mt-10 pt-10 bd-top">
+                    <div class="flex ai-center gap-6 flex-wrap">
+                        <span class="text-sm text-muted mr-auto"
+                            >⏱ Temporizador 20s</span
+                        >
+                        <button
+                            class="btn btn-ghost btn-sm text-sm"
+                            onclick="iniciarTimerRuleta()"
+                            id="btnIniciarTimer"
+                        >
+                            ▶ Iniciar
+                        </button>
+                        <button
+                            class="btn btn-ghost btn-sm text-sm"
+                            onclick="reiniciarTimerRuleta()"
+                            id="btnReiniciarTimer"
+                        >
+                            ⟳ Reiniciar
+                        </button>
+                        <button
+                            class="btn btn-ghost btn-sm text-sm"
+                            onclick="pararTimerRuleta()"
+                            id="btnPararTimer"
+                        >
+                            ⏸ Parar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── VERSOS BÍBLICOS ── -->
+            <div class="card col-span-2" id="versosPanel">
+                <div class="card-header">
+                    <span class="card-title">📖 Versos Bíblicos</span>
+                    <span class="card-badge" id="versosStatus">Inactivo</span>
+                </div>
+
+                <div class="flex-row gap-8">
+                    <button
+                        class="btn btn-primary flex-1 text-sm"
+                        onclick="iniciarVersos()"
+                        id="btnIniciarVersos"
+                        style="
+                            padding: 12px 8px;
+                            background: linear-gradient(
+                                135deg,
+                                #b8860b,
+                                #daa520
+                            );
+                        "
+                    >
+                        📖 INICIAR MODO VERSOS
+                    </button>
+                    <button
+                        class="btn btn-ghost btn-sm hidden"
+                        onclick="versosClose()"
+                        id="btnCerrarVersos"
+                    >
+                        ✕ Cerrar
+                    </button>
+                </div>
+
+                <div id="versosTimerConfig" class="hidden mt-12 pt-12 bd-top">
+                    <div class="flex ai-center gap-6 flex-wrap">
+                        <span class="text-sm text-muted mr-auto"
+                            >⏱ Tiempo límite:
+                            <strong id="inVersosDisplaySeg">60</strong>s</span
+                        >
+                        <input
+                            type="number"
+                            id="input-versos-segundos-nuevo"
+                            value="60"
+                            min="5"
+                            max="600"
+                            class="w-70"
+                        />
+                        <span class="text-sm text-muted">seg</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 mt-3">
+                        <button
+                            class="btn btn-green btn-sm text-sm"
+                            id="btnVersosStart"
+                            onclick="versosTimerStart()"
+                        >
+                            ▶ Iniciar
+                        </button>
+                        <button
+                            class="btn btn-ghost btn-sm text-sm"
+                            id="btnVersosPause"
+                            onclick="versosStop()"
+                            style="display: none"
+                        >
+                            ⏸ Pausar
+                        </button>
+                        <button
+                            class="btn btn-warning btn-sm text-sm font-black"
+                            onclick="reiniciarCronometroVersos()"
+                        >
+                            🔄 Reiniciar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="preview-box hidden mt-10" id="versosPreview">
+                    <div class="preview-label">📖 Estado</div>
+                    <div
+                        class="preview-text text-center fw-900"
+                        id="versosTimerDisplay"
+                        style="
+                            font-size: clamp(1.5rem, 3vw, 2.5rem);
+                            letter-spacing: -0.02em;
+                        "
+                    >
+                        --
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── DAR PUNTOS ── -->
+            <div class="card col-span-2" id="puntosCard">
+                <div class="card-header">
+                    <span class="card-title">Puntos</span>
+                </div>
+
+                <div class="pts-input-row">
+                    <label>Puntos por acción:</label>
+                    <input
+                        type="number"
+                        id="inPuntos"
+                        value="10"
+                        min="1"
+                        max="500"
+                        onchange="actualizarLabels()"
+                    />
+                </div>
+
+                <div class="team-grid" id="teamGrid"></div>
+
+                <!-- Ajuste manual -->
+                <div class="pts-adjust">
+                    <span class="sep-label">Ajuste manual:</span>
+                    <label for="ajGrupo" class="sr-only"
+                        >Grupo para ajuste manual</label
+                    >
+                    <select id="ajGrupo" aria-label="Grupo para ajuste manual"></select>
+                    <input
+                        type="number"
+                        id="ajValor"
+                        placeholder="Valor"
+                        aria-label="Valor de puntos"
+                    />
+                    <button
+                        class="btn btn-ghost btn-sm"
+                        onclick="ajustarPuntos()"
+                    >
+                        Aplicar
+                    </button>
+                </div>
+            </div>
+
+            <!-- ── MARCADOR ── -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Marcador</span>
+                    <div class="flex gap-6">
+                        <button
+                            class="btn btn-ghost btn-sm"
+                            onclick="resetPuntos()"
+                        >
+                            ↺ Reset pts
+                        </button>
+                        <button
+                            class="btn btn-red btn-sm"
+                            onclick="resetTodo()"
+                        >
+                            ⚠ Reset todo
+                        </button>
+                    </div>
+                </div>
+                <table class="scoreboard">
+                    <tbody id="scoreBody"></tbody>
+                </table>
+            </div>
+
+            <!-- ── LOG DE ACTIVIDAD ── -->
+            <div class="card col-span-2">
+                <div class="card-header">
+                    <span class="card-title">Actividad reciente</span>
+                    <span class="card-badge" id="logCount">0</span>
+                </div>
+                <div class="activity-log" id="activityLog">
+                    <div class="log-entry text-muted2">Sin actividad aún…</div>
+                </div>
+            </div>
+
+            <!-- ── SAMPLER DE AUDIO ── -->
+            <div class="card col-span-3">
+                <div class="card-header">
+                    <span class="card-title">🎛️ Sampler</span>
+                    <span class="card-badge" id="samplerCount">0/9</span>
+                </div>
+                <div class="sampler-grid" id="samplerGrid"></div>
+            </div>
+        </div>
+        <!-- /grid -->
+
+        <div class="toast" id="toast"></div>
+        <div class="anim-badge" id="animBadge">ANIM OFF</div>
+
+        <!-- ── Modal de atajos ── -->
+        <div class="modal-overlay" id="helpOverlay">
+            <div class="modal">
+                <div class="modal-header">
+                    <span class="modal-title">Atajos de Teclado</span>
+                    <button class="modal-close" onclick="cerrarAyuda()">
+                        ✕
+                    </button>
+                </div>
+                <div class="shortcut-grid">
+                    <div class="section-label">Temporizador</div>
+                    <div class="shortcut-row">
+                        <div><kbd class="kbd">T</kbd></div>
+                        <div class="shortcut-desc">Iniciar / Pausar</div>
+                    </div>
+                    <div class="shortcut-row">
+                        <div><kbd class="kbd">R</kbd></div>
+                        <div class="shortcut-desc">
+                            Reiniciar al valor original
+                        </div>
+                    </div>
+                    <div class="section-label">Puntos</div>
+                    <div class="shortcut-row">
+                        <div><kbd class="kbd">1</kbd></div>
+                        <div class="shortcut-desc">Sumar → Jóvenes</div>
+                    </div>
+                    <div class="shortcut-row">
+                        <div><kbd class="kbd">2</kbd></div>
+                        <div class="shortcut-desc">Sumar → Damas</div>
+                    </div>
+                    <div class="shortcut-row">
+                        <div><kbd class="kbd">3</kbd></div>
+                        <div class="shortcut-desc">Sumar → Caballeros</div>
+                    </div>
+                    <div class="shortcut-row">
+                        <div><kbd class="kbd">4</kbd></div>
+                        <div class="shortcut-desc">Sumar → Niños</div>
+                    </div>
+                    <div class="section-label">Proyección</div>
+                    <div class="shortcut-row">
+                        <div><kbd class="kbd">Esp</kbd></div>
+                        <div class="shortcut-desc">
+                            Revelar / Ocultar respuesta
+                        </div>
+                    </div>
+                    <div class="shortcut-row">
+                        <div><kbd class="kbd">←</kbd></div>
+                        <div class="shortcut-desc">Pregunta anterior</div>
+                    </div>
+                    <div class="shortcut-row">
+                        <div><kbd class="kbd">→</kbd></div>
+                        <div class="shortcut-desc">Pregunta siguiente</div>
+                    </div>
+                    <div class="section-label">Display</div>
+                    <div class="shortcut-row">
+                        <div><kbd class="kbd">K</kbd></div>
+                        <div class="shortcut-desc">Alternar modo kiosko</div>
+                    </div>
+                    <div class="shortcut-row">
+                        <div><kbd class="kbd">O</kbd></div>
+                        <div class="shortcut-desc">
+                            Reiniciar overlays (winner, etc.)
+                        </div>
+                    </div>
+                    <div class="shortcut-row">
+                        <div><kbd class="kbd">A</kbd></div>
+                        <div class="shortcut-desc">Alternar animaciones</div>
+                    </div>
+                    <div class="shortcut-row">
+                        <div><kbd class="kbd">Q</kbd></div>
+                        <div class="shortcut-desc">¿Quién Soy?</div>
+                    </div>
+                    <div class="shortcut-row">
+                        <div><kbd class="kbd">W</kbd></div>
+                        <div class="shortcut-desc">Libros de la Biblia</div>
+                    </div>
+                    <div class="shortcut-row">
+                        <div><kbd class="kbd">E</kbd></div>
+                        <div class="shortcut-desc">Versículos</div>
+                    </div>
+                    <div class="shortcut-row">
+                        <div><kbd class="kbd">Esp</kbd></div>
+                        <div class="shortcut-desc">
+                            Revelar/Ocultar respuesta
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-16 pt-12 bd-top">
+                    <label class="flex-row-nw-g8 text-muted cp">
+                        <input
+                            type="checkbox"
+                            id="noMostrarAyuda"
+                            onchange="guardarPreferencia()"
+                            style="accent-color: var(--accent)"
+                        />
+                        No volver a mostrar al iniciar
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const API = window.location.origin + "/api";
+
+            let selectedId = null;
+            let lastAnimId = -1;
+            let pregActualCache = null;
+            let respuestaVisible = false;
+            let preguntasCache = [];
+            let timerActivo = false;
+            let _kioskoActivo = false;
+            let _animDisabled = false;
+
+            // ══════════════════════════════════════════════════════
+            // HTTP helpers
+            // ══════════════════════════════════════════════════════
+            async function fetchConRetorno(
+                url,
+                opciones = {},
+                reintentos = 3,
+                retraso = 800,
+                timeoutMs = 5000,
+            ) {
+                const controller = new AbortController();
+                const timer = setTimeout(() => controller.abort(), timeoutMs);
+                if (!opciones.signal) opciones.signal = controller.signal;
+                try {
+                    const r = await fetch(url, opciones);
+                    clearTimeout(timer);
+
+                    if (r.status === 429 || r.headers.get("Retry-After")) {
+                        const retryAfter = r.headers.get("Retry-After");
+                        let waitTime = retraso;
+
+                        if (retryAfter) {
+                            const retrySeconds = parseInt(retryAfter);
+                            if (!isNaN(retrySeconds)) {
+                                waitTime = retrySeconds * 1000;
+                            } else {
+                                waitTime = retraso;
+                            }
+                        }
+
+                        if (reintentos > 0) {
+                            await new Promise((res) =>
+                                setTimeout(res, waitTime),
+                            );
+                            return fetchConRetorno(
+                                url,
+                                opciones,
+                                reintentos - 1,
+                                retraso * 2,
+                            );
+                        }
+                    }
+
+                    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+                    return await r.json();
+                } catch (err) {
+                    clearTimeout(timer);
+                    if (reintentos > 0) {
+                        await new Promise((res) => setTimeout(res, retraso));
+                        return fetchConRetorno(
+                            url,
+                            opciones,
+                            reintentos - 1,
+                            retraso * 2,
+                        );
+                    }
+                    setStatus(false);
+                    throw err;
+                }
+            }
+
+            async function apiPost(endpoint, body, reintentos = 3) {
+                return fetchConRetorno(
+                    `${API}${endpoint}`,
+                    {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(body),
+                    },
+                    reintentos,
+                );
+            }
+
+            async function apiPut(endpoint, body) {
+                return fetchConRetorno(`${API}${endpoint}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(body),
+                });
+            }
+
+            // ══════════════════════════════════════════════════════
+            // SSE
+            // ══════════════════════════════════════════════════════
+            let _ctrlSSE = null,
+                _ctrlRetard = 1000,
+                _ctrlReconectando = false;
+
+            function conectarCtrlSSE() {
+                if (_ctrlSSE) {
+                    _ctrlSSE.close();
+                    _ctrlSSE = null;
+                }
+                const src = new EventSource(`${API}/stream`);
+                _ctrlSSE = src;
+                src.onmessage = (e) => {
+                    try {
+                        const d = JSON.parse(e.data);
+                        setStatus(true);
+                        renderTimer(d.temporizador);
+                        renderMarcador(d.puntos);
+                        renderPreguntaActual(
+                            d.pregunta_actual,
+                            d.mostrar_respuesta,
+                        );
+                        if (d.actividad) renderActividad(d.actividad);
+                        if (d.ultima_animacion_id > lastAnimId)
+                            lastAnimId = d.ultima_animacion_id;
+                        // Sync display config
+                        if (d.display_config) {
+                            _kioskoActivo = d.display_config.kiosko;
+                            _animDisabled =
+                                d.display_config.animations_disabled;
+                        }
+                        if (d.display_config) {
+                            const kb = document.getElementById("btnKiosko");
+                            kb.textContent = _kioskoActivo
+                                ? "🖥 Kiosko: ON"
+                                : "🖥 Kiosko";
+                            kb.className = _kioskoActivo
+                                ? "btn btn-yellow btn-sm"
+                                : "btn btn-ghost btn-sm";
+                            kb.style.flex = "1";
+                            kb.style.fontSize = "11px";
+                            const ab =
+                                document.getElementById("btnAnimaciones");
+                            ab.textContent = _animDisabled
+                                ? "⚡ Anim: OFF"
+                                : "⚡ Animaciones";
+                            ab.className = _animDisabled
+                                ? "btn btn-red btn-sm"
+                                : "btn btn-ghost btn-sm";
+                            ab.style.flex = "1";
+                            ab.style.fontSize = "11px";
+                            // Sync black screen
+                            const bb =
+                                document.getElementById("btnBlackScreen");
+                            const isBlack = d.display_config.black_screen;
+                            bb.textContent = isBlack
+                                ? "⬛ BS: ON"
+                                : "⬛ Black Screen";
+                            bb.className = isBlack
+                                ? "btn btn-red btn-sm"
+                                : "btn btn-ghost btn-sm";
+                            bb.style.flex = "1";
+                            bb.style.fontSize = "11px";
+                            // Sync freeze
+                            const fb = document.getElementById("btnFreeze");
+                            const isFrozen = d.display_config.frozen;
+                            fb.textContent = isFrozen
+                                ? "⏸ Freeze: ON"
+                                : "⏸ Freeze";
+                            fb.className = isFrozen
+                                ? "btn btn-yellow btn-sm"
+                                : "btn btn-ghost btn-sm";
+                            fb.style.flex = "1";
+                            fb.style.fontSize = "11px";
+                            // Sync final round
+                            const frBtn = document.getElementById("btnFinalRound");
+                            if (frBtn) {
+                                const isFR = d.display_config.final_round;
+                                frBtn.textContent = isFR ? "🏆 Final: ON" : "🏆 Final";
+                                frBtn.className = isFR ? "btn btn-red btn-sm flex-1 text-sm" : "btn btn-ghost btn-sm flex-1 text-sm";
+                            }
+                            const showFR = d.display_config.final_results;
+                            const frShowBtn = document.getElementById("btnFinalResults");
+                            const frHideBtn = document.getElementById("btnHideFinalResults");
+                            if (frShowBtn) frShowBtn.style.display = showFR ? "none" : "inline-flex";
+                            if (frHideBtn) frHideBtn.style.display = showFR ? "inline-flex" : "none";
+                            // Sync groups config
+                            if (d.display_config.grupos_config) {
+                                renderGruposConfig(d.display_config.grupos_config);
+                                renderTeamCards(d.display_config.grupos_config);
+                            }
+                            // Sync elimination buttons
+                            const elims = d.display_config.eliminados || [];
+                            const eGroups = d.display_config.grupos_config || [];
+                            eGroups.forEach(function(g) {
+                                const n = g.key;
+                                const eb = document.getElementById("elim" + n);
+                                if (eb) {
+                                    const elim = elims.includes(n);
+                                    eb.textContent = elim ? "♻️ Reinstar" : "🚫 Eliminar";
+                                    eb.className = elim ? "btn btn-sm btn-yellow elim-btn" : "btn btn-sm btn-ghost elim-btn";
+                                    eb.style.flex = "1"; eb.style.fontSize = "10px";
+                                }
+                            });
+                        }
+                        // Sync ruleta state
+                        if (d.ruleta) {
+                            const status =
+                                document.getElementById("ruletaStatus");
+                            const selBtn = document.getElementById(
+                                "btnSeleccionarRuleta",
+                            );
+                            const closeBtn =
+                                document.getElementById("btnCerrarRuleta");
+                            const preview =
+                                document.getElementById("ruletaPreview");
+                            const timerCtrls = document.getElementById(
+                                "ruletaTimerControls",
+                            );
+                            // Fix: si Versos está activo, no mostrar botones interactivos de Ruleta
+                            const _versosActivo = d.versos && d.versos.activo;
+                            if (d.ruleta.activa && !_versosActivo) {
+                                status.textContent = d.ruleta.resultado
+                                    ? "🎰 Activa"
+                                    : "🎰 Categoría";
+                                if (d.ruleta.resultado) {
+                                    selBtn.style.display = "none";
+                                    preview.style.display = "block";
+                                    document.getElementById(
+                                        "ruletaResultadoDisplay",
+                                    ).textContent = d.ruleta.resultado;
+                                    timerCtrls.style.display = "";
+                                } else {
+                                    selBtn.style.display = "inline-flex";
+                                    preview.style.display = "block";
+                                    timerCtrls.style.display = "none";
+                                }
+                                closeBtn.style.display = "inline-flex";
+                                document.getElementById(
+                                    "ruletaNumPalCtrl",
+                                ).textContent = String(
+                                    d.ruleta.num_palabra,
+                                ).padStart(2, "0");
+                                document.getElementById(
+                                    "ruletaNumCantCtrl",
+                                ).textContent = String(
+                                    d.ruleta.num_cantante,
+                                ).padStart(2, "0");
+                                document.getElementById(
+                                    "ruletaCatCtrl",
+                                ).textContent = d.ruleta.categoria
+                                    ? d.ruleta.categoria === "palabra"
+                                        ? "Palabra"
+                                        : "Cantante"
+                                    : "--";
+                            } else {
+                                status.textContent = "Inactiva";
+                                selBtn.style.display = "none";
+                                closeBtn.style.display = "none";
+                                preview.style.display = "none";
+                                timerCtrls.style.display = "none";
+                            }
+                        }
+                        // Sync versos state
+                        if (d.versos) {
+                            const status = document.getElementById("versosStatus");
+                            const preview =
+                                document.getElementById("versosPreview");
+                            const timerDisplay =
+                                document.getElementById("versosTimerDisplay");
+                            if (d.versos.activo) {
+                                status.textContent = "📖 Activo";
+                                preview.style.display = "block";
+                                const s = d.versos.segundos_restantes;
+                                timerDisplay.textContent =
+                                    s > 0 ? `${s}s` : "⏰";
+                                timerDisplay.style.color =
+                                    s <= 10 && s > 0 ? "#FF0040" : "";
+                                if (s <= 10 && s > 0) {
+                                    timerDisplay.style.animation =
+                                        "urgentPulse 0.5s ease-in-out infinite alternate";
+                                } else {
+                                    timerDisplay.style.animation = "";
+                                }
+                            } else {
+                                if (
+                                    document.getElementById("btnIniciarVersos")
+                                        .textContent !==
+                                    "📖 INICIAR MODO VERSOS"
+                                ) {
+                                    // Closed from another client
+                                    document.getElementById(
+                                        "btnIniciarVersos",
+                                    ).textContent = "📖 INICIAR MODO VERSOS";
+                                    document.getElementById(
+                                        "btnIniciarVersos",
+                                    ).disabled = false;
+                                    document.getElementById(
+                                        "btnCerrarVersos",
+                                    ).style.display = "none";
+                                    document.getElementById(
+                                        "versosTimerConfig",
+                                    ).style.display = "none";
+                                    preview.style.display = "none";
+                                    document.getElementById(
+                                        "btnVersosStart",
+                                    ).style.display = "inline-flex";
+                                    document.getElementById(
+                                        "btnVersosPause",
+                                    ).style.display = "none";
+                                }
+                                status.textContent = "Inactivo";
+                            }
+                        }
+                        // Sync opcionBtns visibility
+                        const opBtns = document.getElementById("opcionBtns");
+                        if (
+                            d.pregunta_actual &&
+                            d.pregunta_actual.opciones &&
+                            d.pregunta_actual.opciones.length === 3 &&
+                            d.mostrar_opciones
+                        ) {
+                            opBtns.style.display = "flex";
+                            opBtns.style.animation = "fadeIn 0.3s ease-out forwards";
+                            const isRevealed = d.mostrar_respuesta;
+                            const correctIdx =
+                                d.pregunta_actual.respuesta_correcta;
+
+                            document
+                                .querySelectorAll("#opcionBtns .btn")
+                                .forEach((btn, i) => {
+                                    btn.style.flex = "1";
+                                    btn.style.fontWeight = "900";
+                                    btn.style.fontSize = "15px";
+                                    btn.style.padding = "12px";
+                                    btn.style.borderRadius = "10px";
+                                    btn.style.transition =
+                                        "all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
+
+                                    if (!isRevealed) {
+                                        btn.className =
+                                            i === d.opcion_seleccionada
+                                                ? "btn btn-yellow"
+                                                : "btn btn-ghost";
+                                        btn.style.background =
+                                            i === d.opcion_seleccionada
+                                                ? "linear-gradient(135deg, #B45309 0%, #D97706 100%)"
+                                                : "linear-gradient(135deg, #161616 0%, #1c1c1c 100%)";
+                                        btn.style.borderColor =
+                                            i === d.opcion_seleccionada
+                                                ? "#FBBF24"
+                                                : "var(--border2)";
+                                        btn.style.color =
+                                            i === d.opcion_seleccionada
+                                                ? "#ffffff"
+                                                : "var(--text)";
+                                        btn.style.opacity = "1";
+                                        btn.style.transform =
+                                            i === d.opcion_seleccionada
+                                                ? "scale(1.05)"
+                                                : "scale(1)";
+                                        btn.style.boxShadow =
+                                            i === d.opcion_seleccionada
+                                                ? "0 0 25px rgba(217, 119, 6, 0.5)"
+                                                : "none";
+                                    } else {
+                                        btn.style.transform = "scale(1)";
+                                        if (i === correctIdx) {
+                                            btn.className = "btn btn-green";
+                                            btn.style.background =
+                                                "linear-gradient(135deg, #059669 0%, #10B981 100%)";
+                                            btn.style.borderColor = "#34D399";
+                                            btn.style.color = "#ffffff";
+                                            btn.style.opacity = "1";
+                                            btn.style.boxShadow =
+                                                "0 0 20px rgba(16, 185, 129, 0.6), inset 0 0 15px rgba(255, 255, 255, 0.2)";
+                                        } else if (i === d.opcion_seleccionada) {
+                                            btn.className = "btn btn-red";
+                                            btn.style.background =
+                                                "linear-gradient(135deg, #991B1B 0%, #DC2626 100%)";
+                                            btn.style.borderColor = "#F87171";
+                                            btn.style.color = "rgba(255, 255, 255, 0.85)";
+                                            btn.style.opacity = "1";
+                                            btn.style.transform = "scale(0.95)";
+                                            btn.style.boxShadow =
+                                                "0 0 15px rgba(220, 38, 38, 0.2)";
+                                        } else {
+                                            btn.className = "btn btn-ghost";
+                                            btn.style.background =
+                                                "linear-gradient(135deg, #161616 0%, #1c1c1c 100%)";
+                                            btn.style.borderColor = "var(--border2)";
+                                            btn.style.color = "var(--text)";
+                                            btn.style.opacity = "0.35";
+                                            btn.style.boxShadow = "none";
+                                        }
+                                    }
+                                });
+                        } else {
+                            opBtns.style.display = "none";
+                        }
+                        _ctrlRetard = 1000;
+                    } catch (err) {
+                        console.warn("SSE ctrl parse error", err);
+                    }
+                };
+                src.onerror = () => {
+                    if (_ctrlReconectando) return;
+                    _ctrlReconectando = true;
+                    const oldSrc = src;
+                    const delay = _ctrlRetard;
+                    _ctrlRetard = Math.min(_ctrlRetard * 2, 20_000);
+                    setTimeout(() => {
+                        if (_ctrlSSE !== oldSrc) return; // new connection already established
+                        oldSrc.close();
+                        _ctrlSSE = null;
+                        setStatus(false);
+                        _ctrlReconectando = false;
+                        conectarCtrlSSE();
+                    }, delay);
+                };
+            }
+
+            // ══════════════════════════════════════════════════════
+            // Utils
+            // ══════════════════════════════════════════════════════
+            function toast(msg, dur = 2200) {
+                const el = document.getElementById("toast");
+                el.textContent = msg;
+                el.classList.add("show");
+                clearTimeout(el._t);
+                el._t = setTimeout(() => el.classList.remove("show"), dur);
+            }
+
+            function setStatus(ok) {
+                const pip = document.getElementById("statusPip");
+                const label = document.getElementById("statusLabel");
+                pip.className = "status-pip" + (ok ? " on" : "");
+                label.textContent = ok ? "EN VIVO" : "Sin conexión";
+            }
+
+            function esc(s) {
+                return String(s)
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#39;");
+            }
+
+            function isEnInput() {
+                const t = document.activeElement?.tagName;
+                return t === "INPUT" || t === "TEXTAREA" || t === "SELECT";
+            }
+
+            // ══════════════════════════════════════════════════════
+            // Preguntas
+            // ══════════════════════════════════════════════════════
+                        let categoriasDisponibles = [];
+
+            function poblarCategoriaSelect(selectId, selected) {
+                const sel = document.getElementById(selectId);
+                if (!sel) return;
+                sel.innerHTML = `<option value="">Sin categoría</option>`;
+                categoriasDisponibles.forEach(c => {
+                    const opt = document.createElement("option");
+                    opt.value = c;
+                    opt.textContent = c;
+                    if (c === selected) opt.selected = true;
+                    sel.appendChild(opt);
+                });
+            }
+
+            function poblarTodosCategoriaSelects() {
+                // Poblar el select de creación
+                const inCat = document.getElementById("inCategoria");
+                if (inCat) {
+                    const current = inCat.value;
+                    inCat.innerHTML = `<option value="">Sin categoría</option>`;
+                    categoriasDisponibles.forEach(c => {
+                        const opt = document.createElement("option");
+                        opt.value = c;
+                        opt.textContent = c;
+                        if (c === current) opt.selected = true;
+                        inCat.appendChild(opt);
+                    });
+                }
+                // Poblar el filtro
+                const filterCat = document.getElementById("filterCategoria");
+                if (filterCat) {
+                    const current = filterCat.value;
+                    filterCat.innerHTML = `<option value="">Todas las categorías</option>`;
+                    categoriasDisponibles.forEach(c => {
+                        const opt = document.createElement("option");
+                        opt.value = c;
+                        opt.textContent = c;
+                        if (c === current) opt.selected = true;
+                        filterCat.appendChild(opt);
+                    });
+                }
+                // Poblar selects de edición (los que ya existen en el DOM)
+                document.querySelectorAll("select[id^='editCat-']").forEach(sel => {
+                    const current = sel.value;
+                    sel.innerHTML = `<option value="">Sin categoría</option>`;
+                    categoriasDisponibles.forEach(c => {
+                        const opt = document.createElement("option");
+                        opt.value = c;
+                        opt.textContent = c;
+                        if (c === current) opt.selected = true;
+                        sel.appendChild(opt);
+                    });
+                });
+            }
+
+            async function cargarPreguntas() {
+                if (document.querySelector(".q-edit-form:not(.hidden)")) return;
+                try {
+                    const d = await fetchConRetorno(`${API}/preguntas`);
+                    preguntasCache = d.preguntas;
+                    if (d.categorias_disponibles) {
+                        categoriasDisponibles = d.categorias_disponibles;
+                    }
+                    poblarTodosCategoriaSelects();
+                    // Aplicar filtro activo
+                    const filtro = document.getElementById("filterCategoria");
+                    const catFiltro = filtro ? filtro.value : "";
+                    const lista = catFiltro
+                        ? d.preguntas.filter(p => p.categoria === catFiltro)
+                        : d.preguntas;
+                    renderPreguntas(lista);
+                    document.getElementById("qCount").textContent =
+                        d.preguntas.length;
+                } catch {}
+            }
+
+            
+            function renderPreguntas(lista) {
+                const el = document.getElementById("qList");
+                if (!lista.length) {
+                    el.innerHTML =
+                        '<div style="text-align:center;color:var(--muted2);font-size:12px;padding:20px 0">Sin preguntas — agrega una arriba</div>';
+                    return;
+                }
+                el.innerHTML = lista
+                    .map(
+                        (p, i) => `
+    <div class="q-item ${p.id === selectedId ? "selected" : ""}" onclick="seleccionar(${p.id})" id="qitem-${p.id}">
+      <span class="q-num">${i + 1}</span>
+      <div class="q-body">
+        <div class="q-text">${esc(p.texto)}</div>
+        <div class="q-ans">↳ ${esc(p.respuesta)}</div>
+        ${p.categoria ? `<span class="q-cat-badge" style="display:inline-block;font-size:9px;padding:1px 8px;border-radius:8px;background:var(--accent);color:#fff;margin-top:4px;font-weight:600;">${esc(p.categoria)}</span>` : ""}
+        <!-- Edit form inline (hidden by default) -->
+        <div class="q-edit-form hidden" id="editForm-${p.id}" onclick="event.stopPropagation()">
+          <input type="text" id="editTxt-${p.id}" value="${esc(p.texto)}" placeholder="Pregunta">
+          <input type="text" id="editAns-${p.id}" value="${esc(p.respuesta)}" placeholder="Respuesta">
+          <div class="mt-4 text-xs">
+            <label class="cp usn flex-row-nw-g4">
+              <input type="checkbox" id="editChkMulti-${p.id}" ${p.opciones ? "checked" : ""} onchange="toggleEditMulti(${p.id})">
+              Opción múltiple
+            </label>
+            <div id="editMultiFields-${p.id}" style="display:${p.opciones ? "flex" : "none"};flex-direction:column;gap:4px;margin-top:4px;padding:6px;background:var(--bg2);border-radius:3px;">
+              ${["A", "B", "C"]
+                  .map(
+                      (l, i) => `
+                <div style="display:flex;gap:4px;align-items:center;">
+                  <span style="font-weight:700;width:14px;font-size:10px;">${l}</span>
+                  <input type="text" id="editOpt${l}-${p.id}" value="${esc(p.opciones ? p.opciones[i] : "")}" placeholder="Opción ${l}…" style="flex:1;font-size:10px;padding:2px 6px;">
+                  <label class="cp usn" style="font-size:10px;margin:0;" title="Marcar como correcta">
+                    <input type="radio" name="editRc-${p.id}" value="${i}" ${p.respuesta_correcta === i || (!p.opciones && i === 0) ? "checked" : ""} style="margin:0;"> Correcta
+                  </label>
+                </div>
+              `,
+                  )
+                  .join("")}
+            </div>
+            <!-- Category select in edit form -->
+            <div class="mt-4" style="display:flex;gap:4px;align-items:center;">
+              <label style="font-size:10px;font-weight:600;white-space:nowrap;">Categoría:</label>
+              <select id="editCat-${p.id}" style="flex:1;font-size:10px;padding:2px 4px;">
+                <option value="">Sin categoría</option>
+              </select>
+            </div>
+          </div>
+          <div class="flex gap-6 mt-4">
+            <button class="btn btn-primary btn-sm" onclick="guardarEdicion(${p.id})">Guardar</button>
+            <button class="btn btn-ghost btn-sm"   onclick="cancelarEdicion(${p.id})">Cancelar</button>
+          </div>
+        </div>
+      </div>
+      <div class="q-actions">
+        <button class="btn btn-ghost btn-icon btn-sm" onclick="event.stopPropagation();iniciarEdicion(${p.id})" title="Editar">✏</button>
+        <button class="btn btn-ghost btn-icon btn-sm" style="color:var(--red)" onclick="event.stopPropagation();eliminarPregunta(${p.id})" title="Eliminar">✕</button>
+      </div>
+    </div>
+  `,
+                    )
+                    .join("");
+            }
+
+            function filtrarPreguntas() {
+                cargarPreguntas();
+            }
+
+            function getMultiChoiceData() {
+                const chk = document.getElementById("chkMulti");
+                if (!chk.checked) return null;
+                const a = document.getElementById("inOptA").value.trim();
+                const b = document.getElementById("inOptB").value.trim();
+                const c = document.getElementById("inOptC").value.trim();
+                if (!a || !b || !c) {
+                    toast("⚠ Completa las 3 opciones A, B, C");
+                    return false;
+                }
+                const rcRadio = document.querySelector(
+                    'input[name="rcRadio"]:checked',
+                );
+                if (!rcRadio) {
+                    toast("⚠ Selecciona la respuesta correcta");
+                    return false;
+                }
+                const rc = parseInt(rcRadio.value);
+                return { opciones: [a, b, c], respuesta_correcta: rc };
+            }
+
+            function toggleMultiChoice() {
+                const el = document.getElementById("multiChoiceFields");
+                el.style.display = document.getElementById("chkMulti").checked
+                    ? "flex"
+                    : "none";
+            }
+
+            function onRcChange() {
+                // Sync respuesta input with selected option
+                const rcRadio = document.querySelector(
+                    'input[name="rcRadio"]:checked',
+                );
+                if (!rcRadio) return;
+                const rc = parseInt(rcRadio.value);
+                const ids = ["inOptA", "inOptB", "inOptC"];
+                const target = document.getElementById(ids[rc]);
+                if (target)
+                    document.getElementById("inRespuesta").value = target.value;
+            }
+
+            // Auto-sync respuesta when options change
+            ["inOptA", "inOptB", "inOptC"].forEach((id) => {
+                document
+                    .getElementById(id)
+                    .addEventListener("input", onRcChange);
+            });
+
+            async function crearPregunta() {
+                const texto = document
+                    .getElementById("inPregunta")
+                    .value.trim();
+                const respuesta = document
+                    .getElementById("inRespuesta")
+                    .value.trim();
+                if (!texto || !respuesta) {
+                    toast("⚠ Escribe pregunta y respuesta");
+                    return;
+                }
+                const body = { texto, respuesta };
+                // Categoría
+                const catEl = document.getElementById("inCategoria");
+                if (catEl) {
+                    const cat = catEl.value.trim();
+                    if (cat) body.categoria = cat;
+                }
+                const mc = getMultiChoiceData();
+                if (mc === false) return;
+                if (mc) {
+                    body.opciones = mc.opciones;
+                    body.respuesta_correcta = mc.respuesta_correcta;
+                }
+                try {
+                    await apiPost("/preguntas", body);
+                    document.getElementById("inPregunta").value = "";
+                    document.getElementById("inRespuesta").value = "";
+                    document.getElementById("inOptA").value = "";
+                    document.getElementById("inOptB").value = "";
+                    document.getElementById("inOptC").value = "";
+                    document.getElementById("chkMulti").checked = false;
+                    document.getElementById("multiChoiceFields").style.display =
+                        "none";
+                    await cargarPreguntas();
+                    toast("✓ Pregunta guardada");
+                } catch {
+                    toast("✗ Error al guardar");
+                }
+            }
+
+            // F1-1: Edición inline
+            function iniciarEdicion(id) {
+                // Ocultar otros formularios abiertos
+                document
+                    .querySelectorAll(".q-edit-form")
+                    .forEach((f) => f.classList.add("hidden"));
+                document
+                    .getElementById(`editForm-${id}`)
+                    .classList.remove("hidden");
+                document.getElementById(`editTxt-${id}`).focus();
+            }
+
+            function cancelarEdicion(id) {
+                document
+                    .getElementById(`editForm-${id}`)
+                    .classList.add("hidden");
+            }
+
+            function toggleEditMulti(id) {
+                const el = document.getElementById(`editMultiFields-${id}`);
+                el.style.display = document.getElementById(`editChkMulti-${id}`)
+                    .checked
+                    ? "flex"
+                    : "none";
+            }
+
+            async function guardarEdicion(id) {
+                const texto = document
+                    .getElementById(`editTxt-${id}`)
+                    .value.trim();
+                const respuesta = document
+                    .getElementById(`editAns-${id}`)
+                    .value.trim();
+                if (!texto || !respuesta) {
+                    toast("⚠ Campos requeridos");
+                    return;
+                }
+                const body = { texto, respuesta };
+                const chk = document.getElementById(`editChkMulti-${id}`);
+                if (chk.checked) {
+                    const a = document
+                        .getElementById(`editOptA-${id}`)
+                        .value.trim();
+                    const b = document
+                        .getElementById(`editOptB-${id}`)
+                        .value.trim();
+                    const c = document
+                        .getElementById(`editOptC-${id}`)
+                        .value.trim();
+                    if (!a || !b || !c) {
+                        toast("⚠ Completa las 3 opciones");
+                        return;
+                    }
+                    const rc = parseInt(
+                        document.querySelector(
+                            `input[name="editRc-${id}"]:checked`,
+                        ).value,
+                    );
+                    body.opciones = [a, b, c];
+                    body.respuesta_correcta = rc;
+                } else {
+                    body.opciones = null;
+                }
+                // Categoría
+                const catEl = document.getElementById(`editCat-${id}`);
+                if (catEl) {
+                    const cat = catEl.value.trim();
+                    body.categoria = cat || null;
+                }
+                try {
+                    await apiPut(`/preguntas/${id}`, body);
+                    await cargarPreguntas();
+                    toast("✓ Pregunta actualizada");
+                } catch {
+                    toast("✗ Error al editar");
+                }
+            }
+
+            async function eliminarPregunta(id) {
+                if (!confirm("¿Eliminar esta pregunta?")) return;
+                try {
+                    await fetchConRetorno(`${API}/preguntas/${id}`, {
+                        method: "DELETE",
+                    });
+                } catch {
+                    toast("✗ Error al eliminar");
+                    return;
+                }
+                if (selectedId === id) {
+                    selectedId = null;
+                    actualizarBtnProyectar();
+                }
+                await cargarPreguntas();
+            }
+
+            // F2-2: Exportar
+            async function exportarPreguntas() {
+                try {
+                    const r = await fetch(`${API}/preguntas/exportar`);
+                    if (!r.ok) throw new Error(r.statusText);
+                    const blob = await r.blob();
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = "preguntas.json";
+                    a.click();
+                    setTimeout(() => URL.revokeObjectURL(url), 250);
+                    toast("↓ Exportado");
+                } catch (e) {
+                    toast("✗ Error al exportar: " + (e.message || e));
+                }
+            }
+
+            // F2-2: Importar
+            async function importarPreguntas(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                try {
+                    const text = await file.text();
+                    const data = JSON.parse(text);
+                    const modo = confirm(
+                        "¿Reemplazar todas las preguntas actuales?\n\nOK = Reemplazar · Cancelar = Agregar al final",
+                    )
+                        ? "reemplazar"
+                        : "agregar";
+                    const r = await apiPost("/preguntas/importar", {
+                        preguntas: data.preguntas || data,
+                        modo,
+                    });
+                    await cargarPreguntas();
+                    toast(`✓ ${r.importadas} preguntas importadas (${modo})`);
+                } catch {
+                    toast("✗ Error al importar — verifica el archivo JSON");
+                }
+                event.target.value = "";
+            }
+
+            function seleccionar(id) {
+                selectedId = id;
+                document.querySelectorAll(".q-item").forEach((el) => {
+                    el.classList.remove("selected");
+                });
+                const item = document.getElementById(`qitem-${id}`);
+                if (item) {
+                    item.classList.add("selected");
+                }
+                actualizarBtnProyectar();
+            }
+
+            function actualizarBtnProyectar() {
+                document.getElementById("btnProyectar").disabled =
+                    selectedId === null;
+            }
+
+            async function proyectarActual() {
+                if (!selectedId) {
+                    toast("⚠ Selecciona una pregunta primero");
+                    return;
+                }
+                try {
+                    await apiPost("/pregunta-actual", { id: selectedId });
+                    respuestaVisible = false;
+                    toast("📺 Proyectando");
+                } catch (error) {
+                    toast("✗ Error de conexión al intentar proyectar");
+                    console.error("Error en proyectarActual:", error);
+                }
+            }
+
+            // ── Revelar respuesta ──
+            let _respToggleLock = false;
+            async function toggleRespuesta(mostrar) {
+                if (_respToggleLock) return;
+                _respToggleLock = true;
+                try {
+                    await apiPost("/mostrar-respuesta", { mostrar });
+                    respuestaVisible = mostrar;
+                    actualizarRespPanel(mostrar);
+                    toast(
+                        mostrar
+                            ? "👁 Respuesta visible"
+                            : "🙈 Respuesta oculta",
+                    );
+                } catch (e) {
+                    toast("✗ Error al cambiar respuesta");
+                } finally {
+                    _respToggleLock = false;
+                }
+            }
+
+            function toggleRespuestaAtajo() {
+                toggleRespuesta(!respuestaVisible);
+            }
+
+            function actualizarRespPanel(visible) {
+                document.getElementById("btnRevelar").style.display = visible
+                    ? "none"
+                    : "inline-flex";
+                document.getElementById("btnOcultar").style.display = visible
+                    ? "inline-flex"
+                    : "none";
+                const rt = document.getElementById("apResp");
+                if (pregActualCache) {
+                    rt.textContent = visible
+                        ? pregActualCache.respuesta
+                        : "— oculta —";
+                    rt.className = visible
+                        ? "preview-ans-text"
+                        : "preview-ans-hidden";
+                }
+                // Mostrar opciones button: only when question has opciones and not yet revealed
+                const btnMO = document.getElementById("btnMostrarOpciones");
+                if (
+                    pregActualCache &&
+                    pregActualCache.opciones &&
+                    pregActualCache.opciones.length === 3 &&
+                    !visible
+                ) {
+                    btnMO.style.display = "inline-flex";
+                } else {
+                    btnMO.style.display = "none";
+                }
+            }
+
+            async function mostrarOpciones() {
+                await apiPost("/pregunta-actual/mostrar-opciones");
+                toast("📋 Opciones mostradas — 15s");
+            }
+
+            function renderPreguntaActual(p, mostrar) {
+                const preview = document.getElementById("actualPreview");
+                const lbl = document.getElementById("actualLabel");
+                pregActualCache = p && p.id ? p : null;
+                if (p && p.id) {
+                    lbl.innerHTML = `Activa: <strong style="color:var(--text)">${esc((p.texto || "").slice(0, 50))}…</strong>`;
+                    document.getElementById("apTexto").textContent = p.texto;
+                    preview.style.display = "block";
+                    actualizarRespPanel(mostrar);
+                    respuestaVisible = mostrar;
+                } else {
+                    lbl.textContent = "Sin selección";
+                    preview.style.display = "none";
+                }
+            }
+
+            // ══════════════════════════════════════════════════════
+            // Temporizador
+            // ══════════════════════════════════════════════════════
+            async function iniciarTimer() {
+                try {
+                    const seg =
+                        parseInt(document.getElementById("inSegundos").value) ||
+                        45;
+                    await apiPost("/temporizador/iniciar", { segundos: seg });
+                    timerActivo = true;
+                    toast(`▶ Iniciando ${seg}s`);
+                } catch {
+                    toast("✗ Error al iniciar timer");
+                }
+            }
+            async function reiniciarTimer() {
+                try {
+                    const d = await fetchConRetorno(
+                        `${API}/temporizador/reiniciar`,
+                        { method: "POST" },
+                    );
+                    timerActivo = true;
+                    toast(`↺ Reiniciado a ${d.segundos}s`);
+                } catch {
+                    toast("✗ Error al reiniciar timer");
+                }
+            }
+            async function pararTimer() {
+                try {
+                    await fetchConRetorno(`${API}/temporizador/parar`, {
+                        method: "POST",
+                    });
+                    timerActivo = false;
+                    toast("■ Detenido");
+                } catch {
+                    toast("✗ Error al parar timer");
+                }
+            }
+            async function toggleTimer() {
+                if (timerActivo) await pararTimer();
+                else await iniciarTimer();
+            }
+
+            function renderTimer(t) {
+                const el = document.getElementById("timerDisplay");
+                const bar = document.getElementById("timerBar");
+                const s = t.segundos_restantes;
+                timerActivo = t.activo;
+
+                el.textContent = s < 10 ? "0" + s : String(s);
+                el.classList.toggle("urgent", s <= 5 && t.activo);
+
+                const pct = t.segundos_totales ? s / t.segundos_totales : 0;
+                bar.style.transform = "scaleX(" + pct + ")";
+                bar.classList.toggle("urgent", s <= 5 && t.activo);
+                bar.style.background =
+                    s <= 5 && t.activo ? "var(--red)" : "var(--accent)";
+            }
+
+            // ══════════════════════════════════════════════════════
+            // Puntos
+            // ══════════════════════════════════════════════════════
+            async function darPuntos(grupo) {
+                const cantidad =
+                    parseInt(document.getElementById("inPuntos").value) || 10;
+                await apiPost("/puntos", { grupo, cantidad });
+                toast(`🎉 +${cantidad} → ${grupo}`);
+            }
+
+            // F1-2: Penalización
+            async function restarPuntos(grupo) {
+                const cantidad =
+                    parseInt(document.getElementById("inPuntos").value) || 10;
+                await apiPost("/puntos/restar", { grupo, cantidad });
+                toast(`⚡ −${cantidad} → ${grupo}`);
+                // Brief flash on all penalty buttons
+                document.querySelectorAll(".btn-red").forEach((b) => {
+                    b.style.filter = "brightness(0.4)";
+                    b.style.transform = "scale(0.95)";
+                    setTimeout(() => {
+                        b.style.filter = "";
+                        b.style.transform = "";
+                    }, 200);
+                });
+            }
+
+            async function ajustarPuntos() {
+                const grupo = document.getElementById("ajGrupo").value;
+                const valor = parseInt(
+                    document.getElementById("ajValor").value,
+                );
+                if (isNaN(valor)) {
+                    toast("⚠ Escribe un valor");
+                    return;
+                }
+                await apiPost("/puntos/ajustar", { grupo, valor });
+                toast(`✓ ${grupo} = ${valor} pts`);
+            }
+
+            function actualizarLabels() {
+                const v = document.getElementById("inPuntos").value || "10";
+                document.querySelectorAll(".team-pts-row span[id^='l']").forEach(el => { el.textContent = v; });
+            }
+
+            function renderTeamCards(gc = _gruposGC) {
+                const grid = document.getElementById("teamGrid");
+                if (!grid) return;
+                const puntosVal = parseInt(document.getElementById("inPuntos")?.value || "10", 10);
+                const iconMap = { Jóvenes: "✨", Damas: "🌸", Caballeros: "⚡", Niños: "🌟" };
+                grid.innerHTML = (gc || []).map((g) => {
+                    const key = g.key;
+                    const icon = iconMap[key] || "👥";
+                    const color = g.color || "#888";
+                    const color2 = g.color2 || color;
+                    return `
+                    <div class="team-card" style="--team-color: ${color};">
+                        <div class="team-name" style="color: ${color};">${icon} ${g.nombre || key}</div>
+                        <div class="team-pts-row">
+                            <button class="btn btn-green" onclick="darPuntos('${key}')" id="addBtn${key}">
+                                + <span id="l${key}">${puntosVal}</span> pts
+                            </button>
+                            <button class="btn btn-red" onclick="restarPuntos('${key}')" id="subBtn${key}">
+                                − <span id="l${key}S">${puntosVal}</span> pts
+                            </button>
+                        </div>
+                        <div style="margin-top:4px;display:flex;gap:4px;width:100%;">
+                            <button class="btn btn-sm btn-ghost elim-btn" onclick="toggleEliminar('${key}')" id="elim${key}" style="flex:1;font-size:10px;">🚫 Eliminar</button>
+                        </div>
+                    </div>`;
+                }).join("");
+                // Update label points values after render
+                actualizarLabels();
+                // Populate ajGrupo select
+                const ajSelect = document.getElementById("ajGrupo");
+                if (ajSelect) {
+                    const current = ajSelect.value;
+                    ajSelect.innerHTML = (gc || []).map(g => `<option value="${g.key}">${g.nombre || g.key}</option>`).join("");
+                    if (current && (gc || []).some(g => g.key === current)) ajSelect.value = current;
+                }
+            }
+
+            function renderMarcador(puntos) {
+                const sorted = Object.entries(puntos).sort(
+                    (a, b) => b[1] - a[1],
+                );
+                const max = Math.max(sorted[0]?.[1] || 0, 1);
+                const gc = window._gruposGC || [];
+                const colorMap = Object.fromEntries(gc.map(g => [g.key, g.color]));
+                document.getElementById("scoreBody").innerHTML = sorted
+                    .map(
+                        ([n, pts], i) => `
+    <tr>
+      <td class="w-30">
+        <div class="rank-num rank-${Math.min(i + 1, 4)}">${i + 1}</div>
+      </td>
+      <td>
+        <span class="score-name">
+          <span class="score-dot" style="background:${colorMap[n] || "#888"}"></span>${n}
+        </span>
+      </td>
+      <td class="score-bar-cell">
+        <div class="score-mini-bar" style="transform:scaleX(${max ? pts / max : 0});background:${colorMap[n] || "#888"}"></div>
+      </td>
+      <td class="score-pts" style="color:${colorMap[n] || "var(--text)"}">${pts}</td>
+    </tr>`,
+                    )
+                    .join("");
+            }
+
+            async function toggleEliminar(grupo) {
+                try {
+                    const r = await apiPost("/display/eliminar", { grupo });
+                    const btn = document.getElementById("elim" + grupo);
+                    const eliminado = btn ? r.eliminados.includes(grupo) : false;
+                    if (btn) {
+                        btn.textContent = eliminado ? "♻️ Reinstar" : "🚫 Eliminar";
+                        btn.className = eliminado ? "btn btn-sm btn-yellow elim-btn" : "btn btn-sm btn-ghost elim-btn";
+                        btn.style.flex = "1"; btn.style.fontSize = "10px";
+                    }
+                    toast(eliminado ? `♻️ ${grupo} reinstado` : `🚫 ${grupo} eliminado`);
+                } catch { toast("✗ Error al cambiar eliminación"); }
+            }
+
+            async function resetPuntos() {
+                if (!confirm("¿Poner todos los puntos a 0?")) return;
+                try {
+                    await apiPost("/puntos/reset");
+                    toast("↺ Puntos reiniciados");
+                } catch {
+                    toast("✗ Error al reiniciar puntos");
+                }
+            }
+            async function resetTodo() {
+                if (!confirm("¿RESET COMPLETO? Se borran puntos y preguntas."))
+                    return;
+                try {
+                    await fetchConRetorno(`${API}/reset-todo`, {
+                        method: "POST",
+                    });
+                    selectedId = null;
+                    actualizarBtnProyectar();
+                    await cargarPreguntas();
+                    toast("⚠ Todo reiniciado");
+                } catch {
+                    toast("✗ Error al resetear");
+                }
+            }
+
+            // ══════════════════════════════════════════════════════
+            // Display Controls
+            // ══════════════════════════════════════════════════════
+            async function toggleKiosko() {
+                try {
+                    const r = await apiPost("/display/kiosko");
+                    _kioskoActivo = r.kiosko;
+                    const btn = document.getElementById("btnKiosko");
+                    btn.textContent = _kioskoActivo
+                        ? "🖥 Kiosko: ON"
+                        : "🖥 Kiosko";
+                    btn.className = _kioskoActivo
+                        ? "btn btn-yellow btn-sm"
+                        : "btn btn-ghost btn-sm";
+                    btn.style.flex = "1";
+                    btn.style.fontSize = "11px";
+                    btn.style.transform = "scale(0.92)";
+                    setTimeout(() => (btn.style.transform = ""), 150);
+                    toast(
+                        _kioskoActivo
+                            ? "📽️ Modo kiosko activado"
+                            : "🎨 Modo kiosko desactivado",
+                    );
+                } catch (e) {
+                    toast("✗ Error al cambiar modo kiosko");
+                }
+            }
+
+            async function toggleAnimaciones() {
+                try {
+                    const r = await apiPost("/display/animations");
+                    _animDisabled = r.disabled;
+                    const btn = document.getElementById("btnAnimaciones");
+                    btn.textContent = _animDisabled
+                        ? "⚡ Anim: OFF"
+                        : "⚡ Animaciones";
+                    btn.className = _animDisabled
+                        ? "btn btn-red btn-sm"
+                        : "btn btn-ghost btn-sm";
+                    btn.style.flex = "1";
+                    btn.style.fontSize = "11px";
+                    btn.style.transform = "scale(0.92)";
+                    setTimeout(() => (btn.style.transform = ""), 150);
+                    document
+                        .getElementById("animBadge")
+                        .classList.toggle("show", _animDisabled);
+                    toast(
+                        _animDisabled
+                            ? "⏸ Animaciones desactivadas"
+                            : "▶ Animaciones activadas",
+                    );
+                } catch (e) {
+                    toast("✗ Error al cambiar animaciones");
+                }
+            }
+
+            async function resetOverlays() {
+                try {
+                    await apiPost("/display/reset-overlays");
+                    const btn = document.getElementById("btnOverlays");
+                    btn.textContent = "🧹 OK!";
+                    btn.className = "btn btn-green btn-sm";
+                    btn.style.flex = "1";
+                    btn.style.fontSize = "11px";
+                    btn.style.transform = "scale(0.92)";
+                    setTimeout(() => (btn.style.transform = ""), 150);
+                    setTimeout(() => {
+                        btn.textContent = "🧹 Overlays";
+                        btn.className = "btn btn-ghost btn-sm";
+                        btn.style.flex = "1";
+                        btn.style.fontSize = "11px";
+                    }, 1500);
+                    toast("🧹 Overlays reiniciados (winner, timer end)");
+                } catch (e) {
+                    toast("✗ Error al reiniciar overlays");
+                }
+            }
+
+            // ══════════════════════════════════════════════════════
+            // Log de actividad (F2-1)
+            // ══════════════════════════════════════════════════════
+            function renderActividad(log) {
+                const el = document.getElementById("activityLog");
+                document.getElementById("logCount").textContent = log.length;
+                if (!log.length) {
+                    el.innerHTML =
+                        '<div class="log-entry text-muted2">Sin actividad aún…</div>';
+                    return;
+                }
+                el.innerHTML = log
+                    .map(
+                        (entry) => `<div class="log-entry">${esc(entry)}</div>`,
+                    )
+                    .join("");
+            }
+
+            // ══════════════════════════════════════════════════════
+            // Navegación
+            // ══════════════════════════════════════════════════════
+            async function irAPreguntaAnterior() {
+                if (!preguntasCache.length) {
+                    toast("⚠ No hay preguntas");
+                    return;
+                }
+                const idx = preguntasCache.findIndex(
+                    (p) => p.id === selectedId,
+                );
+                const next = idx <= 0 ? preguntasCache.length - 1 : idx - 1;
+                const p = preguntasCache[next];
+                seleccionar(p.id);
+                await apiPost("/pregunta-actual", { id: p.id });
+                respuestaVisible = false;
+                toast(`◀ Pregunta ${next + 1} de ${preguntasCache.length}`);
+            }
+
+            async function irAPreguntaSiguiente() {
+                if (!preguntasCache.length) {
+                    toast("⚠ No hay preguntas");
+                    return;
+                }
+                const idx = preguntasCache.findIndex(
+                    (p) => p.id === selectedId,
+                );
+                const next =
+                    idx < 0 || idx >= preguntasCache.length - 1 ? 0 : idx + 1;
+                const p = preguntasCache[next];
+                seleccionar(p.id);
+                await apiPost("/pregunta-actual", { id: p.id });
+                respuestaVisible = false;
+                toast(`▶ Pregunta ${next + 1} de ${preguntasCache.length}`);
+            }
+
+            // ══════════════════════════════════════════════════════
+            // Modal de ayuda
+            // ══════════════════════════════════════════════════════
+            function mostrarAyuda() {
+                document.getElementById("helpOverlay").classList.add("show");
+            }
+            function cerrarAyuda() {
+                document.getElementById("helpOverlay").classList.remove("show");
+            }
+            function guardarPreferencia() {
+                const v = document.getElementById("noMostrarAyuda").checked;
+                localStorage.setItem("noMostrarAyuda", v ? "true" : "false");
+            }
+            document
+                .getElementById("helpOverlay")
+                .addEventListener("click", function (e) {
+                    if (e.target === this) cerrarAyuda();
+                });
+
+            // ══════════════════════════════════════════════════════
+            // Atajos de teclado
+            // ══════════════════════════════════════════════════════
+            const SHORTCUTS = {
+                t: toggleTimer,
+                r: reiniciarTimer,
+                1: () => darPuntos("Jóvenes"),
+                2: () => darPuntos("Damas"),
+                3: () => darPuntos("Caballeros"),
+                4: () => darPuntos("Niños"),
+                k: toggleKiosko,
+                o: resetOverlays,
+                a: toggleAnimaciones,
+                b: toggleBlackScreen,
+                f: toggleFreeze,
+                s: salirTodo,
+                c: toggleClean,
+            };
+
+            const DISPLAY_KEYS = ["k", "o", "a", "b", "f", "s", "c"];
+
+            document.addEventListener("keydown", async (e) => {
+                if (isEnInput()) return;
+                if (
+                    e.key === "Enter" &&
+                    document.activeElement.id === "inRespuesta"
+                ) {
+                    crearPregunta();
+                    return;
+                }
+                const key = e.key.toLowerCase();
+                // K, O, A always work even inside inputs
+                if (DISPLAY_KEYS.includes(key) && SHORTCUTS[key]) {
+                    e.preventDefault();
+                    SHORTCUTS[key]();
+                    return;
+                }
+                if (e.key === "Escape") {
+                    cerrarAyuda();
+                    return;
+                }
+                if (e.key === " ") {
+                    e.preventDefault();
+                    if (!pregActualCache) {
+                        toast("⚠ No hay pregunta activa");
+                        return;
+                    }
+                    toggleRespuestaAtajo();
+                    return;
+                }
+                if (e.key === "ArrowLeft") {
+                    e.preventDefault();
+                    await irAPreguntaAnterior();
+                    return;
+                }
+                if (e.key === "ArrowRight") {
+                    e.preventDefault();
+                    await irAPreguntaSiguiente();
+                    return;
+                }
+                if (e.key === "?" || (e.shiftKey && e.key === "/")) {
+                    e.preventDefault();
+                    document
+                        .getElementById("helpOverlay")
+                        .classList.contains("show")
+                        ? cerrarAyuda()
+                        : mostrarAyuda();
+                    return;
+                }
+                const h = SHORTCUTS[key];
+                if (h) {
+                    e.preventDefault();
+                    h();
+                }
+            });
+
+            // ══════════════════════════════════════════════════════
+            // Ruleta (unificada)
+            // ══════════════════════════════════════════════════════
+            async function iniciarRuleta() {
+                // ── Exclusión mutua: cerrar Modo Versos si está activo ──
+                const _vBtnR = document.getElementById("btnIniciarVersos");
+                if (_vBtnR && _vBtnR.textContent.includes("Activo")) {
+                    try {
+                        await apiPost("/versos/close");
+                    } catch (_e) {}
+                    _vBtnR.textContent = "📖 INICIAR MODO VERSOS";
+                    _vBtnR.disabled = false;
+                    document.getElementById("btnCerrarVersos").style.display =
+                        "none";
+                    const _vtcR = document.getElementById("versosTimerConfig");
+                    _vtcR.classList.add("hidden");
+                    _vtcR.style.display = "none";
+                    document.getElementById("versosPreview").style.display =
+                        "none";
+                    document.getElementById("versosStatus").textContent =
+                        "Inactivo";
+                    document.getElementById("btnVersosStart").style.display =
+                        "inline-flex";
+                    document.getElementById("btnVersosPause").style.display =
+                        "none";
+                }
+                try {
+                    const r = await apiPost("/ruleta/iniciar");
+                    const btn = document.getElementById("btnIniciarRuleta");
+                    btn.textContent = "🎰 Iniciando…";
+                    btn.disabled = true;
+                    document.getElementById(
+                        "btnSeleccionarRuleta",
+                    ).style.display = "inline-flex";
+                    document.getElementById("btnCerrarRuleta").style.display =
+                        "inline-flex";
+                    document.getElementById("ruletaStatus").textContent =
+                        "🎰 Categoría…";
+                    document.getElementById("ruletaPreview").style.display =
+                        "block";
+                    document.getElementById("ruletaNumPalCtrl").textContent =
+                        String(r.num_palabra).padStart(2, "0");
+                    document.getElementById("ruletaNumCantCtrl").textContent =
+                        String(r.num_cantante).padStart(2, "0");
+                    document.getElementById("ruletaCatCtrl").textContent =
+                        r.categoria === "palabra" ? "Palabra" : "Cantante";
+                    document.getElementById(
+                        "ruletaResultadoDisplay",
+                    ).textContent = "—";
+                    document.getElementById(
+                        "ruletaTimerControls",
+                    ).style.display = "none";
+                    toast(`🎰 Categoría: ${r.categoria}`);
+                    setTimeout(() => {
+                        btn.textContent = "🎰 Iniciar Ruleta";
+                        btn.disabled = false;
+                        document.getElementById("ruletaStatus").textContent =
+                            "⏳ Esperando…";
+                    }, 500);
+                } catch (e) {
+                    toast("✗ Error al iniciar ruleta");
+                    document.getElementById("btnIniciarRuleta").textContent =
+                        "🎰 Iniciar Ruleta";
+                    document.getElementById("btnIniciarRuleta").disabled =
+                        false;
+                }
+            }
+
+            async function seleccionarRuleta() {
+                try {
+                    const r = await apiPost("/ruleta/seleccionar");
+                    document.getElementById(
+                        "btnSeleccionarRuleta",
+                    ).style.display = "none";
+                    document.getElementById("ruletaStatus").textContent =
+                        "🎰 Resultado";
+                    document.getElementById(
+                        "ruletaResultadoDisplay",
+                    ).textContent = r.resultado;
+                    toast(`🎰 ¡${r.resultado}! — ${r.segundos}s`);
+                    // Show timer controls
+                    document.getElementById(
+                        "ruletaTimerControls",
+                    ).style.display = "";
+                } catch (e) {
+                    toast("✗ Error al seleccionar");
+                }
+            }
+
+            async function cerrarRuleta() {
+                try {
+                    await apiPost("/ruleta/cerrar");
+                    document.getElementById(
+                        "btnSeleccionarRuleta",
+                    ).style.display = "none";
+                    document.getElementById("btnCerrarRuleta").style.display =
+                        "none";
+                    document.getElementById("ruletaPreview").style.display =
+                        "none";
+                    document.getElementById(
+                        "ruletaTimerControls",
+                    ).style.display = "none";
+                    document.getElementById("ruletaStatus").textContent =
+                        "Inactiva";
+                    toast("🎰 Ruleta cerrada");
+                } catch (e) {
+                    toast("✗ Error al cerrar ruleta");
+                }
+            }
+
+            // Ruleta timer controls — server uses 120s (safety buffer)
+            async function iniciarTimerRuleta() {
+                await apiPost("/temporizador/iniciar", { segundos: 20 });
+                timerActivo = true;
+                toast("▶ Ruleta 20s iniciado");
+            }
+            async function reiniciarTimerRuleta() {
+                await apiPost("/temporizador/iniciar", { segundos: 20 });
+                timerActivo = true;
+                toast("↺ Ruleta reiniciado a 20s");
+            }
+            function pararTimerRuleta() {
+                pararTimer();
+            }
+
+            // ══════════════════════════════════════════════════════
+            // Opción múltiple — Seleccionar Opción
+            // ══════════════════════════════════════════════════════
+            async function seleccionarOpcion(indice) {
+                try {
+                    const r = await apiPost(
+                        "/pregunta-actual/seleccionar-opcion",
+                        { indice },
+                    );
+                    toast(`Opción ${["A", "B", "C"][indice]} seleccionada`);
+                    // Highlight the selected button
+                    document
+                        .querySelectorAll("#opcionBtns .btn")
+                        .forEach((btn, i) => {
+                            btn.className = "btn btn-ghost";
+                            btn.style.flex = "1";
+                            btn.style.fontWeight = "900";
+                            btn.style.fontSize = "16px";
+                            btn.style.padding = "10px";
+                            if (i === indice) {
+                                btn.className = "btn btn-yellow";
+                                btn.style.flex = "1";
+                                btn.style.fontWeight = "900";
+                                btn.style.fontSize = "16px";
+                                btn.style.padding = "10px";
+                            }
+                        });
+                } catch (e) {
+                    toast("✗ Error al seleccionar opción");
+                }
+            }
+
+            // ══════════════════════════════════════════════════════
+            // Versos Bíblicos
+            // ══════════════════════════════════════════════════════
+            async function iniciarVersos() {
+                const btn = document.getElementById("btnIniciarVersos");
+                // ── Exclusión mutua: cerrar Ruleta si está activa ──
+                {
+                    const _bCR = document.getElementById("btnCerrarRuleta");
+                    if (_bCR && _bCR.style.display === "inline-flex") {
+                        try {
+                            await apiPost("/ruleta/cerrar");
+                        } catch (_e) {}
+                        _bCR.style.display = "none";
+                        document.getElementById(
+                            "btnSeleccionarRuleta",
+                        ).style.display = "none";
+                        document.getElementById("ruletaPreview").style.display =
+                            "none";
+                        document.getElementById(
+                            "ruletaTimerControls",
+                        ).style.display = "none";
+                        document.getElementById("ruletaStatus").textContent =
+                            "Inactiva";
+                    }
+                }
+                btn.disabled = true;
+                btn.textContent = "⏳ Iniciando…";
+                try {
+                    const r = await apiPost("/versos/iniciar", {
+                        categoria: "quiensoy",
+                    });
+                    btn.disabled = true;
+                    btn.textContent = "📖 Activo";
+                    document.getElementById("btnCerrarVersos").style.display =
+                        "inline-flex";
+                    // classList.remove es necesario porque el div tiene class="hidden"
+                    // y style.display='' no sobrescribe una clase CSS
+                    const _vtc = document.getElementById("versosTimerConfig");
+                    _vtc.classList.remove("hidden");
+                    _vtc.style.display = "block";
+                    document.getElementById("versosStatus").textContent =
+                        "📖 Configurar timer";
+                    document.getElementById("versosPreview").style.display =
+                        "block";
+                    document.getElementById("versosTimerDisplay").textContent =
+                        "--";
+                    toast("📖 Modo versos iniciado");
+                } catch (e) {
+                    btn.disabled = false;
+                    btn.textContent = "📖 INICIAR MODO VERSOS";
+                    toast("✗ Error: " + (e.message || e));
+                }
+            }
+
+            async function versosTimerStart() {
+                const input = document.getElementById(
+                    "input-versos-segundos-nuevo",
+                );
+                const seg = parseInt(input ? input.value : 60, 10) || 60;
+                if (seg < 5 || seg > 600) {
+                    toast("⚠ Tiempo inválido (5–600s)");
+                    return;
+                }
+                try {
+                    await apiPost("/versos/timer/reset", { segundos: seg });
+                    const dispSeg =
+                        document.getElementById("inVersosDisplaySeg");
+                    if (dispSeg) dispSeg.textContent = seg;
+                    document.getElementById("btnVersosStart").style.display =
+                        "none";
+                    document.getElementById("btnVersosPause").style.display =
+                        "inline-flex";
+                    document.getElementById("versosStatus").textContent =
+                        `⏱ ${seg}s iniciados`;
+                    toast(`⏱ Countdown ${seg}s iniciado`);
+                } catch (e) {
+                    toast("✗ Error al iniciar countdown: " + (e.message || e));
+                }
+            }
+
+            async function versosStop() {
+                try {
+                    await apiPost("/versos/stop");
+                    document.getElementById("btnVersosStart").style.display =
+                        "inline-flex";
+                    document.getElementById("btnVersosPause").style.display =
+                        "none";
+                    document.getElementById("versosStatus").textContent =
+                        "⏹ Detenido";
+                    toast("⏹ Versos timer detenido");
+                } catch (e) {
+                    toast("✗ Error al detener timer");
+                }
+            }
+
+            async function versosClose() {
+                // ── Reset UI ANTES del API call (optimista) — el usuario NUNCA queda atascado ──
+                const _resetVersosUI = () => {
+                    document.getElementById("btnIniciarVersos").textContent =
+                        "📖 INICIAR MODO VERSOS";
+                    document.getElementById("btnIniciarVersos").disabled =
+                        false;
+                    document.getElementById("btnCerrarVersos").style.display =
+                        "none";
+                    const vtc = document.getElementById("versosTimerConfig");
+                    vtc.classList.add("hidden");
+                    vtc.style.display = "none";
+                    document.getElementById("versosPreview").style.display =
+                        "none";
+                    document.getElementById("versosStatus").textContent =
+                        "Inactivo";
+                    document.getElementById("btnVersosStart").style.display =
+                        "inline-flex";
+                    document.getElementById("btnVersosPause").style.display =
+                        "none";
+                };
+                _resetVersosUI();
+                try {
+                    await apiPost("/versos/close");
+                    toast("📖 Modo versos cerrado");
+                } catch (e) {
+                    // UI ya fue reseteada arriba; el backend pudo haber fallado
+                    // pero la vista queda limpia
+                    toast("📖 Versos cerrado localmente");
+                }
+            }
+
+            async function reiniciarCronometroVersos() {
+                const input = document.getElementById(
+                    "input-versos-segundos-nuevo",
+                );
+                const segundos = parseInt(input ? input.value : 60, 10) || 60;
+                try {
+                    await apiPost("/versos/timer/reset", { segundos });
+                    document.getElementById("btnVersosStart").style.display =
+                        "none";
+                    document.getElementById("btnVersosPause").style.display =
+                        "inline-flex";
+                    document.getElementById("versosStatus").textContent =
+                        `⏱ ${segundos}s reiniciado`;
+                    const dispSeg =
+                        document.getElementById("inVersosDisplaySeg");
+                    if (dispSeg) dispSeg.textContent = segundos;
+                    toast(`🔄 Temporizador reiniciado a ${segundos}s`);
+                } catch (e) {
+                    console.error(e);
+                    toast("❌ Error al reiniciar: " + (e.message || e));
+                }
+            }
+
+            // ══════════════════════════════════════════════════════
+            // Salir — cierra TODOS los modos y resetea la UI completa
+            // ══════════════════════════════════════════════════════
+            async function salirTodo() {
+                const _g = (id) => document.getElementById(id);
+                const resetSalirUI = () => {
+                    const el = _g("btnIniciarVersos");
+                    if (el) { el.textContent = "📖 INICIAR MODO VERSOS"; el.disabled = false; }
+                    const cv = _g("btnCerrarVersos");
+                    if (cv) cv.style.display = "none";
+                    const vtc = _g("versosTimerConfig");
+                    if (vtc) { vtc.classList.add("hidden"); vtc.style.display = "none"; }
+                    const vp = _g("versosPreview");
+                    if (vp) vp.style.display = "none";
+                    const vs = _g("versosStatus");
+                    if (vs) vs.textContent = "Inactivo";
+                    const vst = _g("btnVersosStart");
+                    if (vst) vst.style.display = "inline-flex";
+                    const vpau = _g("btnVersosPause");
+                    if (vpau) vpau.style.display = "none";
+                    const selR = _g("btnSeleccionarRuleta");
+                    if (selR) selR.style.display = "none";
+                    const cerrR = _g("btnCerrarRuleta");
+                    if (cerrR) cerrR.style.display = "none";
+                    const rp = _g("ruletaPreview");
+                    if (rp) rp.style.display = "none";
+                    const rtc = _g("ruletaTimerControls");
+                    if (rtc) rtc.style.display = "none";
+                    const rs = _g("ruletaStatus");
+                    if (rs) rs.textContent = "Inactiva";
+                };
+                try {
+                    await apiPost("/salir");
+                    // Reset UI inmediato para que el operador nunca quede atascado
+                    resetSalirUI();
+                    toast("🚪 Todos los modos cerrados");
+                } catch (e) {
+                    resetSalirUI();
+                    toast("🚪 Modos cerrados localmente");
+                }
+            }
+
+            // ══════════════════════════════════════════════════════
+            // Black Screen / Freeze
+            // ══════════════════════════════════════════════════════
+            async function toggleBlackScreen() {
+                try {
+                    const r = await apiPost("/display/black-screen");
+                    const btn = document.getElementById("btnBlackScreen");
+                    btn.textContent = r.black_screen
+                        ? "⬛ BS: ON"
+                        : "⬛ Black Screen";
+                    btn.className = r.black_screen
+                        ? "btn btn-red btn-sm"
+                        : "btn btn-ghost btn-sm";
+                    btn.style.flex = "1";
+                    btn.style.fontSize = "11px";
+                    btn.style.transform = "scale(0.92)";
+                    setTimeout(() => (btn.style.transform = ""), 150);
+                    toast(
+                        r.black_screen
+                            ? "⬛ Pantalla negra activada"
+                            : "⬛ Pantalla negra desactivada",
+                    );
+                } catch (e) {
+                    toast("✗ Error black screen");
+                }
+            }
+
+            async function toggleFreeze() {
+                try {
+                    const r = await apiPost("/display/freeze");
+                    const btn = document.getElementById("btnFreeze");
+                    btn.textContent = r.frozen ? "⏸ Freeze: ON" : "⏸ Freeze";
+                    btn.className = r.frozen
+                        ? "btn btn-yellow btn-sm"
+                        : "btn btn-ghost btn-sm";
+                    btn.style.flex = "1";
+                    btn.style.fontSize = "11px";
+                    btn.style.transform = "scale(0.92)";
+                    setTimeout(() => (btn.style.transform = ""), 150);
+                    toast(
+                        r.frozen
+                            ? "⏸ Display congelado"
+                            : "▶ Display descongelado",
+                    );
+                } catch (e) {
+                    toast("✗ Error freeze");
+                }
+            }
+
+            async function toggleClean() {
+                try {
+                    const r = await apiPost("/display/clean");
+                    const btn = document.getElementById("btnClean");
+                    btn.textContent = r.clean ? "🖼️ Clean: ON" : "🖼️ Clean";
+                    btn.className = r.clean
+                        ? "btn btn-green btn-sm flex-1 text-sm"
+                        : "btn btn-ghost btn-sm flex-1 text-sm";
+                    toast(
+                        r.clean
+                            ? "🧹 Fondo limpio activado"
+                            : "🧹 Fondo limpio desactivado",
+                    );
+                } catch {
+                    toast("✗ Error clean");
+                }
+            }
+
+            async function toggleFinalRound() {
+                try {
+                    const r = await apiPost("/display/final-round");
+                    const btn = document.getElementById("btnFinalRound");
+                    btn.textContent = r.final_round ? "🏆 Final: ON" : "🏆 Final";
+                    btn.className = r.final_round
+                        ? "btn btn-red btn-sm flex-1 text-sm"
+                        : "btn btn-ghost btn-sm flex-1 text-sm";
+                    btn.style.transform = "scale(0.92)";
+                    setTimeout(() => (btn.style.transform = ""), 150);
+                    toast(r.final_round ? "🏆 Ronda final activada (puntos dobles)" : "🏆 Ronda final desactivada");
+                } catch { toast("✗ Error ronda final"); }
+            }
+
+            async function showFinalResults() {
+                try {
+                    await apiPost("/display/final-results");
+                    document.getElementById("btnFinalResults").style.display = "none";
+                    document.getElementById("btnHideFinalResults").style.display = "inline-flex";
+                    toast("🏆 Resultados finales mostrados en pantalla");
+                } catch { toast("✗ Error al mostrar resultados"); }
+            }
+
+            async function hideFinalResults() {
+                try {
+                    await apiPost("/display/final-results/hide");
+                    document.getElementById("btnFinalResults").style.display = "inline-flex";
+                    document.getElementById("btnHideFinalResults").style.display = "none";
+                    toast("Resultados finales ocultados");
+                } catch { toast("✗ Error al ocultar resultados"); }
+            }
+
+            // ── Groups config ──
+            let _gruposGC = [
+                { key: "Caballeros", nombre: "Caballeros", color: "#0284c7", color2: "#0369a1", fijo: true },
+                { key: "Damas", nombre: "Damas", color: "#db2777", color2: "#be185d", fijo: true },
+                { key: "Niños", nombre: "Niños", color: "#059669", color2: "#047857", fijo: true },
+                { key: "Jóvenes", nombre: "Jóvenes", color: "#7c3aed", color2: "#6d28d9", fijo: true },
+            ];
+            function renderGruposConfig(gc) {
+                _gruposGC = gc || _gruposGC;
+                const container = document.getElementById("gruposList");
+                if (!container) return;
+                const maxOk = _gruposGC.length < 6;
+                document.getElementById("btnAddGrupo").style.display = maxOk ? "" : "none";
+                document.getElementById("gruposCount").textContent = _gruposGC.length;
+                container.innerHTML = _gruposGC.map((g, i) => `
+                    <div class="flex-row gap-4" style="align-items:center;margin-bottom:6px;padding:6px 8px;background:var(--bg2);border-radius:8px;">
+                        <input type="color" value="${g.color}" data-idx="${i}" class="grp-color" style="width:36px;height:36px;border:2px solid #000;border-radius:6px;cursor:pointer;padding:0;">
+                        <input type="text" value="${g.nombre || g.key}" data-idx="${i}" class="grp-nombre" style="flex:1;padding:6px 10px;border:2px solid var(--border);border-radius:6px;font-size:0.9rem;font-weight:700;background:#fff;">
+                        <input type="color" value="${g.color2 || g.color}" data-idx="${i}" class="grp-color2" style="width:36px;height:36px;border:2px solid #000;border-radius:6px;cursor:pointer;padding:0;">
+                        ${g.fijo ? '<span style="font-size:0.7rem;color:#888;font-weight:700;padding:0 4px;">FIJO</span>' :
+                          `<button class="btn btn-sm btn-red" onclick="removeGrupo(${i})" style="padding:4px 10px;">✕</button>`}
+                    </div>
+                `).join("");
+                // Bind color preview
+                container.querySelectorAll(".grp-color, .grp-color2").forEach(el => {
+                    el.addEventListener("input", () => {
+                        el.style.borderColor = el.value;
+                    });
+                    el.style.borderColor = el.value;
+                });
+            }
+            function slugify(str) {
+                return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+                    .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+            }
+            function addGrupo() {
+                const n = _gruposGC.length + 1;
+                const nombre = "Grupo " + n;
+                _gruposGC.push({ key: slugify(nombre) + "-" + Date.now().toString(36), nombre, color: "#888888", color2: "#AAAAAA", fijo: false });
+                renderGruposConfig(_gruposGC);
+            }
+            function removeGrupo(idx) {
+                if (idx >= 0 && idx < _gruposGC.length && !_gruposGC[idx].fijo) {
+                    _gruposGC.splice(idx, 1);
+                    renderGruposConfig(_gruposGC);
+                }
+            }
+            function collectGruposFromUI() {
+                const container = document.getElementById("gruposList");
+                if (!container) return _gruposGC;
+                const names = container.querySelectorAll(".grp-nombre");
+                const colors = container.querySelectorAll(".grp-color");
+                const colors2 = container.querySelectorAll(".grp-color2");
+                const updated = _gruposGC.map((g, i) => ({
+                    key: g.key,
+                    nombre: names[i] ? names[i].value.trim() || g.key : g.nombre,
+                    color: colors[i] ? colors[i].value : g.color,
+                    color2: colors2[i] ? colors2[i].value : g.color2,
+                    fijo: g.fijo,
+                }));
+                _gruposGC = updated;
+                return updated;
+            }
+            async function guardarGrupos() {
+                const grupos = collectGruposFromUI();
+                try {
+                    const r = await apiPost("/grupos/config", { grupos });
+                    _gruposGC = r.grupos_config || grupos;
+                    renderGruposConfig(_gruposGC);
+                    const st = document.getElementById("gruposStatus");
+                    if (st) { st.style.opacity = "1"; setTimeout(() => st.style.opacity = "0", 2000); }
+                    toast("👥 Grupos guardados");
+                } catch (e) {
+                    toast("✗ Error al guardar grupos");
+                }
+            }
+
+            async function exportarJSON() {
+                try {
+                    const r = await fetchConRetorno(`${API}/exportar/resultados`);
+                    const blob = new Blob([JSON.stringify(r, null, 2)], {type: "application/json"});
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url; a.download = "resultados.json";
+                    document.body.appendChild(a); a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    toast("📥 Resultados exportados como JSON");
+                } catch { toast("✗ Error al exportar JSON"); }
+            }
+
+            function exportarImagen() {
+                window.open(`${API}/exportar/resultados/imagen`, "_blank");
+                toast("📸 Página de resultados abierta (guardar como imagen)");
+            }
+
+            // ══════════════════════════════════════════════════════
+            // Theme toggle (brutal / calm)
+            // ══════════════════════════════════════════════════════
+            function toggleTheme() {
+                const html = document.documentElement;
+                const current = html.getAttribute("data-theme") || "brutal";
+                const next = current === "brutal" ? "calm" : "brutal";
+                html.setAttribute("data-theme", next);
+                localStorage.setItem("theme", next);
+                const btn = document.getElementById("themeBtn");
+                if (next === "calm") {
+                    btn.textContent = "🎨 Tema: Sereno";
+                    btn.className = "btn btn-yellow btn-sm";
+                    btn.style.flex = "1";
+                    btn.style.fontSize = "11px";
+                } else {
+                    btn.textContent = "🎨 Tema";
+                    btn.className = "btn btn-ghost btn-sm";
+                }
+                apiPost("/display/theme", { theme: next }).catch(() => {});
+                toast(
+                    next === "calm"
+                        ? "🌿 Tema Sereno activado"
+                        : "⚡ Tema Brutal activado",
+                );
+            }
+
+            function aplicarTemaInicial() {
+                const saved = localStorage.getItem("theme") || "brutal";
+                if (saved === "calm") {
+                    document.documentElement.setAttribute("data-theme", "calm");
+                    const btn = document.getElementById("themeBtn");
+                    if (btn) {
+                        btn.textContent = "🎨 Tema: Sereno";
+                        btn.className = "btn btn-yellow btn-sm";
+                        btn.style.flex = "1";
+                        btn.style.fontSize = "11px";
+                    }
+                }
+            }
+
+            // ══════════════════════════════════════════════════════
+            // SAMPLER DE AUDIO
+            // ══════════════════════════════════════════════════════
+            const _sampler = (() => {
+                const NUM_SLOTS = 9;
+                const slots = [];
+                let _actx = null;
+                function getCtx() {
+                    if (!_actx) _actx = new (window.AudioContext || window.webkitAudioContext)();
+                    return _actx;
+                }
+
+                function fmtTime(s) {
+                    const m = Math.floor(s / 60);
+                    const sec = Math.floor(s % 60);
+                    return m + ":" + (sec < 10 ? "0" : "") + sec;
+                }
+
+                function fmtDur(s) {
+                    if (!s || isNaN(s)) return "--";
+                    const m = Math.floor(s / 60);
+                    const sec = Math.floor(s % 60);
+                    return m + ":" + (sec < 10 ? "0" : "") + sec;
+                }
+
+                function build() {
+                    const grid = document.getElementById("samplerGrid");
+                    if (!grid) return;
+                    grid.innerHTML = "";
+                    for (let i = 0; i < NUM_SLOTS; i++) {
+                        const slot = {
+                            index: i,
+                            buffer: null,
+                            fileName: "",
+                            duration: 0,
+                            startPct: 0,
+                            endPct: 100,
+                            sourceNode: null,
+                        };
+                        slots[i] = slot;
+
+                        const div = document.createElement("div");
+                        div.className = "sampler-slot";
+                        div.dataset.idx = i;
+
+                        div.innerHTML = `
+                            <div class="sampler-slot-header">
+                                <span class="sampler-status-dot empty" id="sdot-${i}"></span>
+                                <span class="sampler-slot-num">${i + 1}</span>
+                                <span class="sampler-slot-file" id="sfile-${i}">Vacío</span>
+                                <span class="sampler-slot-dur" id="sdur-${i}"></span>
+                            </div>
+                            <div class="sampler-trim-row">
+                                <label>Inicio</label>
+                                <input type="range" min="0" max="100" value="0" id="strimS-${i}" disabled>
+                                <span class="sampler-trim-time" id="stimeS-${i}">0:00</span>
+                            </div>
+                            <div class="sampler-trim-row">
+                                <label>Final</label>
+                                <input type="range" min="0" max="100" value="100" id="strimE-${i}" disabled>
+                                <span class="sampler-trim-time" id="stimeE-${i}">0:00</span>
+                            </div>
+                            <div class="sampler-actions">
+                                <button class="btn btn-ghost btn-sm" id="supload-${i}">📁 Cargar</button>
+                                <button class="btn btn-ghost btn-sm" id="splay-${i}" disabled>▶</button>
+                                <button class="btn btn-ghost btn-sm" id="sclear-${i}" disabled>✕</button>
+                            </div>
+                        `;
+                        grid.appendChild(div);
+
+                        // Upload
+                        const uploadBtn = div.querySelector("#supload-" + i);
+                        const fileInput = document.createElement("input");
+                        fileInput.type = "file";
+                        fileInput.accept = "audio/mpeg,audio/mp3,audio/wav,audio/ogg,audio/webm,audio/*";
+                        fileInput.style.display = "none";
+                        div.appendChild(fileInput);
+                        uploadBtn.addEventListener("click", () => fileInput.click());
+                        fileInput.addEventListener("change", (e) => handleFile(i, e));
+
+                        // Trim sliders
+                        const sSlider = div.querySelector("#strimS-" + i);
+                        const eSlider = div.querySelector("#strimE-" + i);
+                        sSlider.addEventListener("input", () => updateTrim(i));
+                        eSlider.addEventListener("input", () => updateTrim(i));
+
+                        // Play
+                        const playBtn = div.querySelector("#splay-" + i);
+                        playBtn.addEventListener("click", () => playSlot(i));
+
+                        // Clear
+                        const clearBtn = div.querySelector("#sclear-" + i);
+                        clearBtn.addEventListener("click", () => clearSlot(i));
+                    }
+                    updateCount();
+                }
+
+                function handleFile(idx, e) {
+                    const file = e.target.files && e.target.files[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = async (ev) => {
+                        try {
+                            const ctx = getCtx();
+                            const arrBuf = ev.target.result;
+                            const audioBuf = await ctx.decodeAudioData(arrBuf);
+                            const slot = slots[idx];
+                            slot.buffer = audioBuf;
+                            slot.duration = audioBuf.duration;
+                            slot.fileName = file.name;
+                            slot.startPct = 0;
+                            slot.endPct = 100;
+                            refreshSlot(idx);
+                            updateCount();
+                        } catch (err) {
+                            toast("✗ Error al decodificar audio: " + err.message);
+                        }
+                    };
+                    reader.readAsArrayBuffer(file);
+                    e.target.value = "";
+                }
+
+                function refreshSlot(idx) {
+                    const slot = slots[idx];
+                    const el = document.querySelector('.sampler-slot[data-idx="' + idx + '"]');
+                    if (!el) return;
+                    const fileSpan = document.getElementById("sfile-" + idx);
+                    const durSpan = document.getElementById("sdur-" + idx);
+                    const dot = document.getElementById("sdot-" + idx);
+                    const playBtn = document.getElementById("splay-" + idx);
+                    const clearBtn = document.getElementById("sclear-" + idx);
+                    const sSlider = document.getElementById("strimS-" + idx);
+                    const eSlider = document.getElementById("strimE-" + idx);
+                    const timeS = document.getElementById("stimeS-" + idx);
+                    const timeE = document.getElementById("stimeE-" + idx);
+
+                    if (slot.buffer) {
+                        el.classList.add("has-audio");
+                        fileSpan.textContent = slot.fileName || "Audio cargado";
+                        durSpan.textContent = fmtDur(slot.duration);
+                        dot.className = "sampler-status-dot loaded";
+                        playBtn.disabled = false;
+                        clearBtn.disabled = false;
+                        sSlider.disabled = false;
+                        eSlider.disabled = false;
+                        const s = slot.startPct / 100 * slot.duration;
+                        const e = slot.endPct / 100 * slot.duration;
+                        timeS.textContent = fmtTime(s);
+                        timeE.textContent = fmtTime(e);
+                        sSlider.value = slot.startPct;
+                        eSlider.value = slot.endPct;
+                    } else {
+                        el.classList.remove("has-audio", "playing");
+                        fileSpan.textContent = "Vacío";
+                        durSpan.textContent = "";
+                        dot.className = "sampler-status-dot empty";
+                        playBtn.disabled = true;
+                        clearBtn.disabled = true;
+                        sSlider.disabled = true;
+                        eSlider.disabled = true;
+                        sSlider.value = 0;
+                        eSlider.value = 100;
+                        timeS.textContent = "0:00";
+                        timeE.textContent = "0:00";
+                    }
+                }
+
+                function updateTrim(idx) {
+                    const slot = slots[idx];
+                    if (!slot || !slot.buffer) return;
+                    const sSlider = document.getElementById("strimS-" + idx);
+                    const eSlider = document.getElementById("strimE-" + idx);
+                    let s = parseFloat(sSlider.value);
+                    let e = parseFloat(eSlider.value);
+                    if (s >= e) { s = e - 1; if (s < 0) { s = 0; e = 1; } }
+                    slot.startPct = s;
+                    slot.endPct = e;
+                    const timeS = document.getElementById("stimeS-" + idx);
+                    const timeE = document.getElementById("stimeE-" + idx);
+                    timeS.textContent = fmtTime(s / 100 * slot.duration);
+                    timeE.textContent = fmtTime(e / 100 * slot.duration);
+                }
+
+                async function playSlot(idx) {
+                    const slot = slots[idx];
+                    if (!slot || !slot.buffer) return;
+                    const ctx = getCtx();
+                    if (ctx.state === "suspended") await ctx.resume();
+
+                    // Stop previous
+                    if (slot.sourceNode) {
+                        try { slot.sourceNode.stop(); } catch(e) {}
+                        slot.sourceNode = null;
+                    }
+
+                    const el = document.querySelector('.sampler-slot[data-idx="' + idx + '"]');
+                    const dot = document.getElementById("sdot-" + idx);
+
+                    const s = slot.startPct / 100 * slot.duration;
+                    const e = slot.endPct / 100 * slot.duration;
+                    const dur = e - s;
+                    if (dur <= 0) return;
+
+                    const source = ctx.createBufferSource();
+                    source.buffer = slot.buffer;
+                    source.connect(ctx.destination);
+                    source.start(0, s, dur);
+                    slot.sourceNode = source;
+                    el.classList.add("playing");
+                    dot.className = "sampler-status-dot playing";
+
+                    source.onended = () => {
+                        slot.sourceNode = null;
+                        el.classList.remove("playing");
+                        if (slot.buffer) {
+                            dot.className = "sampler-status-dot loaded";
+                        } else {
+                            dot.className = "sampler-status-dot empty";
+                        }
+                    };
+                }
+
+                function clearSlot(idx) {
+                    const slot = slots[idx];
+                    if (slot.sourceNode) {
+                        try { slot.sourceNode.stop(); } catch(e) {}
+                        slot.sourceNode = null;
+                    }
+                    slot.buffer = null;
+                    slot.duration = 0;
+                    slot.fileName = "";
+                    slot.startPct = 0;
+                    slot.endPct = 100;
+                    refreshSlot(idx);
+                    updateCount();
+                }
+
+                function updateCount() {
+                    const c = document.getElementById("samplerCount");
+                    if (!c) return;
+                    const n = slots.filter(s => s.buffer !== null).length;
+                    c.textContent = n + "/" + NUM_SLOTS;
+                }
+
+                function initShortcuts() {
+                    document.addEventListener("keydown", (e) => {
+                        if (e.repeat) return;
+                        if (e.ctrlKey || e.altKey || e.metaKey) return;
+                        const tag = document.activeElement?.tagName || "";
+                        if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+                        const n = parseInt(e.key, 10);
+                        if (n >= 1 && n <= NUM_SLOTS && slots[n - 1] && slots[n - 1].buffer) {
+                            e.preventDefault();
+                            e.stopImmediatePropagation();
+                            playSlot(n - 1);
+                        }
+                    }, { capture: true });
+                }
+
+                return { build, initShortcuts };
+            })();
+
+            _sampler.build();
+            _sampler.initShortcuts();
+
+            // ══════════════════════════════════════════════════════
+            // Init
+            // ══════════════════════════════════════════════════════
+            if (
+                !localStorage.getItem("noMostrarAyuda") &&
+                !localStorage.getItem("ayudaVistaPrimera")
+            ) {
+                localStorage.setItem("ayudaVistaPrimera", "true");
+                setTimeout(mostrarAyuda, 1000);
+            }
+
+            aplicarTemaInicial();
+            cargarPreguntas();
+            renderTeamCards();
+            conectarCtrlSSE();
+            const _pollInterval = setInterval(cargarPreguntas, 8000);
+            window.addEventListener("beforeunload", () => {
+                if (_ctrlSSE) {
+                    _ctrlSSE.close();
+                    _ctrlSSE = null;
+                }
+                clearInterval(_pollInterval);
+            });
+        </script>
+    </body>
+</html>
