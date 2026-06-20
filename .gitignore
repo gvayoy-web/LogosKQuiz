@@ -1,7 +1,3 @@
-# ====================================================================
-# TEMPLATE GENERAL DE .GITIGNORE - CAMPEONÍSIMO BÍBLICO
-# ====================================================================
-
 # --- Archivos del entorno virtual y dependencias de Python ---
 venv/
 .venv/
@@ -34,7 +30,7 @@ backups/
 *.sln
 *.swp
 
-# --- Residuos del compilador PyInstaller (si intentas hacer un .exe) ---
+# --- Residuos del compilador PyInstaller ---
 build/
 dist/
 *.spec
